@@ -352,238 +352,26 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7ZsgfPb-dw1oxroQT5e3WyhDFspOP3yalxywQReOviGqGpx_slZ07LmnnRgnUJ-ikxw/exec";
 
 /* ============================
-   Question Model
-   - prompt is always answerable WITHOUT seeing choices (group-friendly)
-   - 1 correct answer only
-   - distractors are constructed to not match the clue
+   Utilities
    ============================ */
-function Q(prompt, answer, distractors, meta={}) {
-  return {
-    prompt,
-    answer,
-    distractors,
-    category: meta.category || "General",
-    type: meta.type || "text", // text | image | audio
-    mediaSrc: meta.mediaSrc || null
-  };
-}
+const STOP_WORDS = new Set([
+  "the","a","an","and","of","to","in","for","is","it","on","at","with","by",
+  "christmas","holiday","holidays","xmas","movie","film","song"
+]);
 
-/* ============================
-   Data Lists
-   ============================ */
-const MOVIES = [
-  "Home Alone","Elf","The Polar Express","How the Grinch Stole Christmas","A Christmas Story",
-  "Miracle on 34th Street","The Santa Clause","National Lampoon's Christmas Vacation",
-  "It's a Wonderful Life","Rudolph the Red-Nosed Reindeer","Frosty the Snowman",
-  "A Charlie Brown Christmas","Arthur Christmas","Klaus","The Muppet Christmas Carol",
-  "The Nightmare Before Christmas","Jingle All the Way","Christmas with the Kranks",
-  "Scrooged","White Christmas","Prancer","The Christmas Chronicles","Deck the Halls","Four Christmases"
-];
-
-const SONGS = [
-  "Jingle Bells","Silent Night","O Holy Night","Joy to the World","Deck the Halls",
-  "We Wish You a Merry Christmas","The First Noel","Hark! The Herald Angels Sing",
-  "Away in a Manger","O Come All Ye Faithful","God Rest Ye Merry, Gentlemen",
-  "Carol of the Bells","Little Drummer Boy","Let It Snow! Let It Snow! Let It Snow!",
-  "Frosty the Snowman","Rudolph the Red-Nosed Reindeer","Rockin' Around the Christmas Tree",
-  "Jingle Bell Rock","White Christmas","Silver Bells","Santa Claus Is Comin' to Town",
-  "Have Yourself a Merry Little Christmas","Winter Wonderland",
-  "It's Beginning to Look a Lot Like Christmas","Blue Christmas","Last Christmas",
-  "All I Want for Christmas Is You"
-];
-
-const NON_SONGS = [
-  "Happy Birthday","Twinkle Twinkle Little Star","Old MacDonald Had a Farm","Baby Shark",
-  "Let It Go","Shake It Off","Uptown Funk","We Will Rock You","Hey Jude","Supercalifragilisticexpialidocious"
-];
-
-const REINDEER = ["Dasher","Dancer","Prancer","Vixen","Comet","Cupid","Donner","Blitzen","Rudolph"];
-
-const FOODS = ["Gingerbread","Candy cane","Eggnog","Fruitcake","Hot chocolate","Sugar cookies","Peppermint bark","Yule log cake"];
-
-const WORLD_TRADITIONS = [
-  {thing:"Christmas crackers", place:"United Kingdom"},
-  {thing:"Advent calendar", place:"Germany"},
-  {thing:"Panettone", place:"Italy"},
-  {thing:"St. Lucia Day", place:"Sweden"},
-  {thing:"Shoes left out for gifts", place:"Netherlands"}
-];
-
-/* Movie characters (good group-friendly prompts) */
-const CHARACTERS = [
-  {character:"Kevin McCallister", movie:"Home Alone"},
-  {character:"Buddy", movie:"Elf"},
-  {character:"The Grinch", movie:"How the Grinch Stole Christmas"},
-  {character:"Ralphie Parker", movie:"A Christmas Story"},
-  {character:"Scott Calvin", movie:"The Santa Clause"},
-  {character:"Clark Griswold", movie:"National Lampoon's Christmas Vacation"},
-  {character:"George Bailey", movie:"It's a Wonderful Life"},
-  {character:"Ebenezer Scrooge", movie:"The Muppet Christmas Carol"},
-  {character:"Jack Skellington", movie:"The Nightmare Before Christmas"},
-  {character:"Jesper", movie:"Klaus"}
-];
-
-/* ============================
-   Toy/Gift questions are now CLUE-BASED (single correct)
-   ============================ */
-const TOY_CLUE_QUESTIONS = [
-  Q(
-    "Which hard-to-find 1996 toy featured a giggling character from a popular children's show (Sesame Street)?",
-    "Tickle Me Elmo",
-    ["Goofy Gus","Wiggling Wralph","Crazy Cookie Monster","Laughing Larry"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which late-1990s electronic pet toy was famous for speaking its own made-up language (\"Furbish\")?",
-    "Furby",
-    ["Chatter Chipmunk","Blinking Bunny","Robo Raccoon","Purr-o-matic Kitty"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which pocket-sized digital pet toy needed feeding and care or it would 'get sick'?",
-    "Tamagotchi",
-    ["Nano Narwhal","Pocket Panda Pal","Bit-Baby Buddy","Mini Monster Mate"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which doll line famously came with 'adoption papers' and unique names?",
-    "Cabbage Patch Kids",
-    ["Carrot Case Kids","Turnip Town Tots","Pumpkin Patch Pals","Nursery Nibblers"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which small collectible stuffed toys became famous for having heart-shaped tags?",
-    "Beanie Babies",
-    ["Stuffed Sprites","Plush Poppers","Tag-a-Toys","Snuggle Nuggets"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which game console is known for having detachable controllers called 'Joy-Cons'?",
-    "Nintendo Switch",
-    ["PlayStation","Xbox","GameSphere","UltraStation"],
-    {category:"Famous Gifts"}
-  ),
-  Q(
-    "Which puzzle toy is a colorful cube you twist to match colors on each side?",
-    "Rubik's Cube",
-    ["Color Spinner","Twist-a-Box","Rainbow Brick","Puzzle Prism"],
-    {category:"Famous Gifts"}
-  )
-];
-
-/* ============================
-   Clue maps (group-friendly)
-   ============================ */
-const FOOD_CLUES = [
-  Q("Which holiday treat is often a brown, spiced cookie used to build little houses?", "Gingerbread",
-    ["Eggnog","Fruitcake","Hot chocolate","Peppermint bark"], {category:"Food & Treats"}),
-  Q("Which holiday candy is usually a striped peppermint stick shaped like a cane?", "Candy cane",
-    ["Yule log cake","Sugar cookies","Fruitcake","Eggnog"], {category:"Food & Treats"}),
-  Q("Which creamy holiday drink is often served cold and sometimes topped with nutmeg?", "Eggnog",
-    ["Hot chocolate","Fruit punch","Apple juice","Lemonade"], {category:"Food & Treats"}),
-  Q("Which holiday dessert is a very dense cake that people joke lasts forever?", "Fruitcake",
-    ["Gingerbread","Sugar cookies","Yule log cake","Peppermint bark"], {category:"Food & Treats"}),
-  Q("Which warm sweet drink is often topped with marshmallows in winter?", "Hot chocolate",
-    ["Eggnog","Fruitcake","Candy cane","Panettone"], {category:"Food & Treats"})
-];
-
-const REINDEER_CLUES = [
-  Q("Which reindeer is famous for having a red nose?", "Rudolph",
-    ["Dasher","Comet","Cupid","Vixen"], {category:"Santa & Reindeer"}),
-  Q("Which two reindeer names are often linked with 'thunder' and 'lightning'?", "Donner and Blitzen",
-    ["Dasher and Dancer","Comet and Cupid","Prancer and Vixen","Rudolph and Frosty"], {category:"Santa & Reindeer"})
-];
-
-const STORY = [
-  Q("Where was Jesus born (Christmas story)?", "Bethlehem",
-    ["Nazareth","Jerusalem","Rome","Capernaum"], {category:"Christmas Story"}),
-  Q("Who visited baby Jesus with gifts (Christmas story)?", "Wise men (Magi)",
-    ["Roman soldiers","Kings of England","Fishermen","Temple guards"], {category:"Christmas Story"}),
-  Q("What guided the wise men to Jesus?", "A star",
-    ["A rainbow","A map from Caesar","A dove","A lighthouse"], {category:"Christmas Story"}),
-  Q("What 3 gifts did the wise men bring?", "Gold, frankincense, and myrrh",
-    ["Gold, silver, and bronze","Bread, milk, and honey","Perfume, silk, and spices","Toys, candy, and cookies"], {category:"Christmas Story"})
-];
-
-/* Audio and image placeholders (still clue-based, never “which of these”) */
-const MEDIA_QUESTIONS = [
-  Q("AUDIO: Identify this Christmas song from the short clip.", "Jingle Bells",
-    ["Silent Night","Deck the Halls","Winter Wonderland","Jingle Bell Rock"],
-    {category:"Audio", type:"audio", mediaSrc:"audio/jingle_bells.mp3"}),
-
-  Q("IMAGE: Name the movie shown in this picture.", "Home Alone",
-    ["Elf","A Christmas Story","The Santa Clause","How the Grinch Stole Christmas"],
-    {category:"Images", type:"image", mediaSrc:"images/home_alone.jpg"})
-];
-
-/* ============================
-   Generator helpers that AVOID ambiguous “category membership”
-   - Uses unique tokens/prefixes so only 1 answer fits.
-   - This prevents “multiple correct” choices like your song screenshot.
-   ============================ */
-const STOP_WORDS = new Set(["the","a","an","and","of","to","in","for","is","it","on","at","ye","o"]);
-
-function words(s){
-  return s
+function tokenize(s){
+  return String(s)
     .toLowerCase()
-    .replace(/[^a-z0-9\s!']/g," ")
+    .replace(/[^a-z0-9\s']/g," ")
     .split(/\s+/)
     .filter(Boolean)
-    .filter(w=>!STOP_WORDS.has(w));
+    .filter(w => !STOP_WORDS.has(w));
 }
 
-function uniqueTokenMap(items){
-  const freq = new Map();
-  const itemWords = new Map();
-  for (const it of items){
-    const ws = words(it);
-    itemWords.set(it, ws);
-    for (const w of new Set(ws)){
-      freq.set(w, (freq.get(w)||0)+1);
-    }
-  }
-  // pick best unique token per item (unique + longer)
-  const tokenFor = new Map();
-  for (const it of items){
-    const ws = itemWords.get(it);
-    const unique = ws.filter(w=>freq.get(w)===1);
-    unique.sort((a,b)=>b.length-a.length);
-    tokenFor.set(it, unique[0] || null);
-  }
-  return tokenFor;
-}
-
-function uniquePrefixMap(items){
-  const freq = new Map();
-  const prefixFor = new Map();
-  const splitWords = new Map();
-  for (const it of items){
-    const ws = it.replace(/[^a-z0-9\s!']/gi," ").trim().split(/\s+/).filter(Boolean);
-    splitWords.set(it, ws);
-  }
-  // build 2-word prefixes
-  for (const it of items){
-    const ws = splitWords.get(it);
-    if (ws.length >= 2){
-      const p = (ws[0] + " " + ws[1]).toLowerCase();
-      freq.set(p, (freq.get(p)||0)+1);
-    }
-  }
-  for (const it of items){
-    const ws = splitWords.get(it);
-    if (ws.length >= 2){
-      const p = (ws[0] + " " + ws[1]).toLowerCase();
-      if (freq.get(p) === 1) prefixFor.set(it, `${ws[0]} ${ws[1]}`);
-      else prefixFor.set(it, null);
-    } else prefixFor.set(it, null);
-  }
-  return prefixFor;
-}
-
-function pick4From(list, bannedSet){
-  const pool = list.filter(x=>!bannedSet.has(x));
-  shuffle(pool);
-  return pool.slice(0,4);
+function promptContainsAnswerWords(prompt, answer){
+  const pset = new Set(tokenize(prompt));
+  const a = tokenize(answer);
+  return a.some(w => pset.has(w));
 }
 
 function shuffle(arr){
@@ -594,173 +382,426 @@ function shuffle(arr){
   return arr;
 }
 
+function pick4Distinct(list){
+  const arr = [...new Set(list)];
+  shuffle(arr);
+  return arr.slice(0,4);
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
+}
+
+function stopAnyAudio(){
+  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(_){} });
+}
+
 /* ============================
-   Build Question Bank (300+)
-   No “Which of these…” prompts.
-   No ambiguous “multiple correct” distractors.
+   Question Model
+   ============================ */
+function Q(id, prompt, answer, distractors, meta={}) {
+  return {
+    id,
+    prompt,
+    answer,
+    distractors,
+    category: meta.category || "General",
+    type: meta.type || "text", // text | image | audio
+    mediaSrc: meta.mediaSrc || null,
+    template: meta.template || "misc",
+    avoidAnswerWords: meta.avoidAnswerWords ?? false
+  };
+}
+
+/* ============================
+   Movie Titles + SAFE descriptions (avoid title keywords)
+   ============================ */
+const MOVIE_TITLES = [
+  {id:"mv_ha", title:"Home Alone", clue:"A kid is accidentally left behind and defends his house from two burglars using clever traps."},
+  {id:"mv_elf", title:"Elf", clue:"A grown man raised at the North Pole travels to New York City to find his real father."},
+  {id:"mv_polar", title:"The Polar Express", clue:"A boy takes a magical train ride to the North Pole on Christmas Eve."},
+  {id:"mv_grinch", title:"How the Grinch Stole Christmas", clue:"A cranky green creature tries to ruin the holiday for a cheerful town."},
+  {id:"mv_story", title:"A Christmas Story", clue:"A boy desperately wants a BB gun, but adults keep warning him he’ll shoot his eye out."},
+  {id:"mv_34", title:"Miracle on 34th Street", clue:"A man claims he is the famous gift-giver, and a court case tests whether he’s telling the truth."},
+  {id:"mv_clause", title:"The Santa Clause", clue:"A man accidentally becomes the new holiday gift-giver after a surprising night on his roof."},
+  {id:"mv_vac", title:"National Lampoon's Christmas Vacation", clue:"A family’s holiday plans go hilariously wrong, including an over-the-top light display."},
+  {id:"mv_wonder", title:"It's a Wonderful Life", clue:"A man sees what the world would be like if he had never been born."},
+  {id:"mv_rud", title:"Rudolph the Red-Nosed Reindeer", clue:"A reindeer with a glowing nose finds his place and helps guide a sleigh through a storm."},
+  {id:"mv_frosty", title:"Frosty the Snowman", clue:"A snowman comes to life thanks to a magical hat."},
+  {id:"mv_cb", title:"A Charlie Brown Christmas", clue:"A boy feels down about the season and learns what it’s really about while directing a play."},
+  {id:"mv_arth", title:"Arthur Christmas", clue:"An animated adventure where a delivery team races to bring one last missed present."},
+  {id:"mv_klaus", title:"Klaus", clue:"A selfish postman teams up with a mysterious toymaker and changes a town forever."},
+  {id:"mv_muppet", title:"The Muppet Christmas Carol", clue:"A grouchy businessman is visited by spirits who show him his past, present, and future."},
+  {id:"mv_nightmare", title:"The Nightmare Before Christmas", clue:"A Halloween town leader discovers another holiday world and tries to take it over."},
+  {id:"mv_jingle", title:"Jingle All the Way", clue:"A dad desperately hunts for a sold-out action figure on the day before Christmas."},
+  {id:"mv_scrooged", title:"Scrooged", clue:"A rude TV executive is visited by spirits who force him to rethink his life."},
+  {id:"mv_white", title:"White Christmas", clue:"Singers put on a show to help their former commander and a struggling inn."},
+  {id:"mv_prancer", title:"Prancer", clue:"A girl believes she has found one of the famous reindeer and tries to protect him."},
+  {id:"mv_kranks", title:"Christmas with the Kranks", clue:"A couple tries to skip the holiday, but their neighborhood won’t allow it."},
+  {id:"mv_deck", title:"Deck the Halls", clue:"Two neighbors compete in an escalating battle of decorations."},
+  {id:"mv_four", title:"Four Christmases", clue:"A couple ends up visiting four different family gatherings in one day."},
+  {id:"mv_chron", title:"The Christmas Chronicles", clue:"Kids accidentally mess up the big delivery night and help save Christmas."}
+];
+
+/* ============================
+   Premade-style questions (NO lyrics)
+   - Includes your examples (minus lyric-quoting ones)
+   - Plus many more in the same style
+   ============================ */
+const PREMADE = [
+  Q("pm_001", "Which popular Christmas beverage is also called “milk punch”?", "Eggnog",
+    ["Hot chocolate","Apple cider","Lemonade","Fruit punch"], {category:"Food & Treats", template:"premade"}),
+
+  Q("pm_002", "What did the other reindeer not let Rudolph do because of his shiny red nose?", "Join in any reindeer games",
+    ["Lead Santa’s sleigh","Deliver presents","Sleep in the barn","Wear a bell"], {category:"Santa & Reindeer", template:"premade"}),
+
+  Q("pm_003", "How many ghosts show up in A Christmas Carol (not counting Scrooge)?", "Four",
+    ["One","Two","Three","Five"], {category:"Movies", template:"premade"}),
+
+  Q("pm_004", "Where was baby Jesus born?", "Bethlehem",
+    ["Nazareth","Jerusalem","Rome","Capernaum"], {category:"Christmas Story", template:"premade"}),
+
+  Q("pm_005", "Miracle on 34th Street is based on a real-life department store. Which one?", "Macy’s",
+    ["Target","Walmart","Nordstrom","Sears"], {category:"Movies", template:"premade"}),
+
+  Q("pm_006", "Which modern-day country was St. Nicholas born in?", "Turkey",
+    ["Greece","Italy","France","Spain"], {category:"History", template:"premade"}),
+
+  Q("pm_007", "In It’s a Wonderful Life, what happens every time a bell rings?", "An angel got his wings",
+    ["A candle lights itself","It starts snowing","A door opens","Santa laughs"], {category:"Movies", template:"premade"}),
+
+  Q("pm_008", "In Charles Dickens’s A Christmas Carol, what was Scrooge’s first name?", "Ebenezer",
+    ["Edward","Eugene","Elijah","Ernest"], {category:"Movies", template:"premade"}),
+
+  Q("pm_009", "Which branch of the U.S. military runs “Toys for Tots”?", "The Marines",
+    ["The Navy","The Air Force","The Army","The Coast Guard"], {category:"History", template:"premade"}),
+
+  Q("pm_010", "About 1.3 billion of these are sent each year in the U.S. during Christmas. What are they?", "Christmas cards",
+    ["Pumpkins","Fireworks","Valentine hearts","School pencils"], {category:"Traditions", template:"premade"}),
+
+  Q("pm_011", "What do children traditionally get from Santa if they’re on the “Naughty List”?", "A lump of coal",
+    ["A gold medal","A new bike","A snow globe","A candy cane"], {category:"Santa & Reindeer", template:"premade"}),
+
+  Q("pm_012", "What is the name of Rudolph’s girlfriend in the classic story?", "Clarice",
+    ["Vixen","Dancer","Mittens","Sally"], {category:"Santa & Reindeer", template:"premade"}),
+
+  Q("pm_013", "In A Christmas Story, what is Ralphie’s little brother’s name?", "Randy",
+    ["Ronnie","Richie","Robby","Ray"], {category:"Movies", template:"premade"}),
+
+  Q("pm_014", "Which country started the tradition of putting up a Christmas tree?", "Germany",
+    ["Italy","Spain","Canada","Brazil"], {category:"History", template:"premade"}),
+
+  Q("pm_015", "In Canada, what holiday is celebrated the day after Christmas?", "Boxing Day",
+    ["Founders Day","Maple Day","New Year’s Eve","Remembrance Day"], {category:"History", template:"premade"}),
+
+  Q("pm_016", "In which war did a famous “Christmas Truce” take place?", "World War I",
+    ["World War II","Civil War","Korean War","Vietnam War"], {category:"History", template:"premade"}),
+
+  Q("pm_017", "What’s the name of the Grinch’s dog?", "Max",
+    ["Buddy","Rudy","Bolt","Rex"], {category:"Movies", template:"premade"}),
+
+  Q("pm_018", "Which action movie set on Christmas Eve is often debated as a Christmas movie?", "Die Hard",
+    ["Top Gun","Rocky","Rambo","Speed"], {category:"Movies", template:"premade"}),
+
+  Q("pm_019", "Which meal do people in Japan traditionally eat on Christmas?", "Kentucky Fried Chicken",
+    ["Sushi","Ramen","Tempura","Tacos"], {category:"World Traditions", template:"premade"}),
+
+  Q("pm_020", "What is a common name for Christmas trees besides “Christmas tree”?", "Yule tree",
+    ["Pine tower","Holiday bush","Snow shrub","Evergreen wand"], {category:"Traditions", template:"premade"}),
+
+  Q("pm_021", "What decoration was historically made from real silver?", "Tinsel",
+    ["Confetti","Ribbon","Garland","Bows"], {category:"Traditions", template:"premade"}),
+
+  Q("pm_022", "Which Christmas ballet premiered in 1892?", "The Nutcracker",
+    ["Swan Lake","Cinderella","Sleeping Beauty","Peter Pan"], {category:"History", template:"premade"}),
+
+  Q("pm_023", "Which fairy tale inspired early gingerbread houses?", "Hansel and Gretel",
+    ["Cinderella","Jack and the Beanstalk","Rapunzel","Goldilocks"], {category:"History", template:"premade"}),
+
+  Q("pm_024", "In Home Alone, where is the family traveling when Kevin is left behind?", "Paris",
+    ["London","Rome","New York","Los Angeles"], {category:"Movies", template:"premade"}),
+
+  Q("pm_025", "In The Polar Express, which actor voices multiple roles?", "Tom Hanks",
+    ["Jim Carrey","Will Ferrell","Tim Allen","Adam Sandler"], {category:"Movies", template:"premade"}),
+
+  Q("pm_026", "Which company was an early famous user of Santa in advertising?", "Coca-Cola",
+    ["Pepsi","Ford","Nike","LEGO"], {category:"History", template:"premade"}),
+
+  Q("pm_027", "Which Christmas song was originally written for Thanksgiving (later became a holiday song)?", "Jingle Bells",
+    ["Silent Night","O Holy Night","The First Noel","Carol of the Bells"], {category:"Songs", template:"premade"}),
+
+  Q("pm_028", "What are three of Santa’s reindeer names that start with the letter “D”?", "Dancer, Dasher and Donner",
+    ["Cupid, Comet and Clarice","Vixen, Vance and Vito","Blitzen, Buddy and Buster","Prancer, Pouncer and Piper"], {category:"Santa & Reindeer", template:"premade"}),
+
+  Q("pm_029", "In the poem “‘Twas the Night Before Christmas,” how many reindeer are mentioned?", "Eight",
+    ["Six","Seven","Nine","Ten"], {category:"History", template:"premade"}),
+
+  Q("pm_030", "In North America, what’s another name for wild reindeer?", "Caribou",
+    ["Moose","Elk","Bison","Antelope"], {category:"Santa & Reindeer", template:"premade"}),
+
+  Q("pm_031", "What is the name of the last ghost that visits Scrooge?", "The Ghost of Christmas Yet To Come",
+    ["The Ghost of Christmas Past","The Ghost of Christmas Present","The Ghost of New Year’s Day","The Ghost of Halloween"], {category:"Movies", template:"premade"}),
+
+  Q("pm_032", "What food “danced in children’s heads” in ‘Twas the Night Before Christmas?", "Sugar plums",
+    ["Candy canes","Apples","Cookies","Hot dogs"], {category:"Traditions", template:"premade"}),
+
+  Q("pm_033", "In Miracle on 34th Street, what is the real store mentioned as part of the story?", "Macy’s",
+    ["Bloomingdale’s","Target","Walmart","Kohl’s"], {category:"Movies", template:"premade"}),
+
+  Q("pm_034", "What is the name of George Bailey’s guardian angel in It’s a Wonderful Life?", "Clarence Odbody",
+    ["Gabriel North","Michael Star","Joseph Holly","Edwin Bell"], {category:"Movies", template:"premade"}),
+
+  Q("pm_035", "In the 1964 Rudolph the Red-Nosed Reindeer, what was the name of Rudolph’s elf friend?", "Hermey",
+    ["Harvey","Henry","Herbie","Herman"], {category:"Movies", template:"premade"}),
+
+  Q("pm_036", "Which family is featured in National Lampoon’s Christmas Vacation?", "The Griswolds",
+    ["The McCallisters","The Parkers","The Baileys","The Browns"], {category:"Movies", template:"premade"}),
+
+  Q("pm_037", "What is a popular horned figure in folklore said to punish naughty children?", "Krampus",
+    ["Gryla","Jack Frost","The Yeti","The Sandman"], {category:"Folklore", template:"premade"}),
+
+  Q("pm_038", "What is a traditional hot spiced cider drink enjoyed at winter celebrations?", "Wassail",
+    ["Lemonade","Milkshake","Iced tea","Soda pop"], {category:"Food & Treats", template:"premade"}),
+
+  Q("pm_039", "How do you say “Merry Christmas” in Spanish?", "Feliz Navidad",
+    ["Bonjour Noël","Buon Natale","Frohe Weihnachten","Joyeux Pâques"], {category:"Languages", template:"premade"}),
+
+  Q("pm_040", "What is the best-selling Christmas song ever (by recording)?", "White Christmas",
+    ["Jingle Bells","Silent Night","Joy to the World","Deck the Halls"], {category:"Songs", template:"premade"})
+];
+
+/* ============================
+   Clue banks (lots of hardcoded Q/A, single-correct)
+   ============================ */
+const CLUE_OBJECTS = [
+  {id:"ob_eggnog", category:"Food & Treats", answer:"Eggnog", clue:"A creamy holiday drink often served cold and topped with nutmeg."},
+  {id:"ob_mistletoe", category:"Traditions", answer:"Mistletoe", clue:"A plant people stand under for a traditional holiday kiss."},
+  {id:"ob_wreath", category:"Traditions", answer:"Wreath", clue:"A circular decoration often made of evergreen branches and hung on doors."},
+  {id:"ob_stocking", category:"Traditions", answer:"Stocking", clue:"A sock-shaped decoration hung for small gifts."},
+  {id:"ob_candycane", category:"Food & Treats", answer:"Candy cane", clue:"A striped peppermint candy shaped like a shepherd’s staff."},
+  {id:"ob_gingerbread", category:"Food & Treats", answer:"Gingerbread", clue:"A spiced cookie often used to build tiny houses."},
+  {id:"ob_hotchoc", category:"Food & Treats", answer:"Hot chocolate", clue:"A warm sweet drink often topped with marshmallows."},
+  {id:"ob_fruitcake", category:"Food & Treats", answer:"Fruitcake", clue:"A dense cake known for a famously long shelf life."},
+  {id:"ob_tinsel", category:"Traditions", answer:"Tinsel", clue:"Shiny strands used on trees, historically made from real silver."},
+  {id:"ob_boxing", category:"History", answer:"Boxing Day", clue:"A holiday celebrated the day after Christmas in Canada and the UK."},
+  {id:"ob_krampus", category:"Folklore", answer:"Krampus", clue:"A horned folklore figure said to punish naughty children."},
+  {id:"ob_nutcracker", category:"History", answer:"The Nutcracker", clue:"A famous ballet from 1892 often performed during the holidays."},
+  {id:"ob_yulelog", category:"Traditions", answer:"Yule log", clue:"A traditional log (or cake shaped like one) linked to winter celebrations."},
+  {id:"ob_advent", category:"Traditions", answer:"Advent calendar", clue:"A calendar used to count down the days until Christmas."},
+  {id:"ob_menorah", category:"General", answer:"Menorah", clue:"A special candle holder used during Hanukkah (often around the holiday season)."},
+  {id:"ob_giftwrap", category:"Traditions", answer:"Wrapping paper", clue:"Colorful paper used to cover presents."},
+  {id:"ob_ribbon", category:"Traditions", answer:"Ribbon", clue:"A long decorative strip often tied into bows on gifts."},
+  {id:"ob_ornament", category:"Traditions", answer:"Ornament", clue:"A decoration hung on a tree (often shiny or colorful)."},
+  {id:"ob_star", category:"Traditions", answer:"Star", clue:"A common tree-top decoration that represents the Star of Bethlehem."},
+  {id:"ob_angel", category:"Traditions", answer:"An angel", clue:"A common tree-top decoration that represents a heavenly messenger."}
+];
+
+const TOY_CLUES = [
+  {id:"toy_001", answer:"Tickle Me Elmo", clue:"A hard-to-find 1996 toy featuring a giggling Sesame Street character."},
+  {id:"toy_002", answer:"Furby", clue:"A late-1990s electronic pet toy known for speaking its own made-up language."},
+  {id:"toy_003", answer:"Tamagotchi", clue:"A pocket-sized digital pet you have to feed and care for."},
+  {id:"toy_004", answer:"Cabbage Patch Kids", clue:"A doll line known for unique names and adoption papers."},
+  {id:"toy_005", answer:"Beanie Babies", clue:"Small collectible stuffed toys famous for heart-shaped tags."},
+  {id:"toy_006", answer:"Rubik's Cube", clue:"A twisting puzzle cube where you try to match colors on each side."},
+  {id:"toy_007", answer:"Nintendo Switch", clue:"A game system known for detachable controllers called Joy-Cons."},
+  {id:"toy_008", answer:"PlayStation", clue:"A video game console brand known for controllers with symbol buttons (triangle, circle, X, square)."},
+  {id:"toy_009", answer:"Xbox", clue:"A video game console brand made by Microsoft."},
+  {id:"toy_010", answer:"LEGO", clue:"Plastic building bricks used to build sets like castles, spaceships, and cities."}
+];
+
+/* ============================
+   Audio & Image placeholders (optional)
+   ============================ */
+const MEDIA_QUESTIONS = [
+  Q("au_001", "AUDIO: Identify this Christmas song from the short clip.", "Jingle Bells",
+    ["Silent Night","Deck the Halls","Winter Wonderland","Jingle Bell Rock"],
+    {category:"Audio", template:"audio", type:"audio", mediaSrc:"audio/jingle_bells.mp3"}),
+
+  Q("im_001", "IMAGE: Name the movie shown in this picture.", "Home Alone",
+    ["Elf","A Christmas Story","The Santa Clause","How the Grinch Stole Christmas"],
+    {category:"Images", template:"image", type:"image", mediaSrc:"images/home_alone.jpg"})
+];
+
+/* ============================
+   Build movie description questions (no title tokens in prompt)
+   ============================ */
+function buildMovieDescriptionQuestions(){
+  const out = [];
+  const titles = MOVIE_TITLES.map(m=>m.title);
+  for (const m of MOVIE_TITLES){
+    const distractors = pick4Distinct(titles.filter(t=>t!==m.title));
+    const q = Q(
+      m.id,
+      `Which Christmas movie fits this description? ${m.clue}`,
+      m.title,
+      distractors,
+      {category:"Movies", template:"movie_desc", avoidAnswerWords:true}
+    );
+    // enforce: prompt shouldn't contain meaningful title words
+    if (!promptContainsAnswerWords(q.prompt, q.answer)) out.push(q);
+  }
+  return out;
+}
+
+/* ============================
+   Build clue questions (objects + toys)
+   ============================ */
+function buildClueQuestions(){
+  const out = [];
+  const allAnswers = [
+    ...CLUE_OBJECTS.map(x=>x.answer),
+    ...TOY_CLUES.map(x=>x.answer)
+  ];
+
+  for (const item of CLUE_OBJECTS){
+    const distractors = pick4Distinct(allAnswers.filter(a=>a!==item.answer).concat([
+      "Snow globe","Gingerbread house","Garland","Icicle ornament","Peppermint bark","Candy cane"
+    ]));
+    out.push(Q(item.id, item.clue, item.answer, distractors, {category:item.category, template:"object_clue"}));
+  }
+
+  for (const t of TOY_CLUES){
+    const distractors = pick4Distinct(allAnswers.filter(a=>a!==t.answer).concat([
+      "Goofy Gus","Wiggling Wralph","Crazy Cookie Monster","Laughing Larry","Robot Raccoon"
+    ]));
+    out.push(Q(t.id, t.clue, t.answer, distractors, {category:"Famous Gifts", template:"toy_clue"}));
+  }
+
+  return out;
+}
+
+/* ============================
+   Extra solid Q/A (no lyrics, no word-search)
+   ============================ */
+const EXTRA = [
+  Q("ex_001", "What are two popular nicknames for Santa Claus?", "Kris Kringle and Saint Nick",
+    ["Father Frost and Snow King","Old Man Winter and Jack Frost","Captain Cheer and Gift Guy","North Nick and Mr. Jolly"], {category:"Santa & Reindeer", template:"extra"}),
+
+  Q("ex_002", "What are the three gifts traditionally brought by the Wise Men?", "Gold, frankincense, and myrrh",
+    ["Gold, silver, and bronze","Bread, milk, and honey","Perfume, silk, and spices","Toys, candy, and cookies"], {category:"Christmas Story", template:"extra"}),
+
+  Q("ex_003", "What guided the Wise Men to the newborn Jesus in the Christmas story?", "A star",
+    ["A rainbow","A map from Caesar","A dove","A lighthouse"], {category:"Christmas Story", template:"extra"}),
+
+  Q("ex_004", "Where did Mary and Joseph stay the night Jesus was born (according to the story)?", "In a stable (because the inn was full)",
+    ["In a palace","In a school","In a temple","In a boat"], {category:"Christmas Story", template:"extra"}),
+
+  Q("ex_005", "What is the name of the green character who tries to ruin Christmas for a town?", "The Grinch",
+    ["Frosty","Buddy","Scrooge","Jack Frost"], {category:"Movies", template:"extra"}),
+
+  Q("ex_006", "What do people traditionally hang by the fireplace to fill with small gifts?", "Stocking",
+    ["Backpack","Boot","Pillowcase","Hat"], {category:"Traditions", template:"extra"}),
+
+  Q("ex_007", "What is a common thing people do when they find themselves under mistletoe?", "Kiss",
+    ["Sing","Dance","Run","Hide"], {category:"Traditions", template:"extra"}),
+
+  Q("ex_008", "In A Christmas Carol, what famous phrase is Scrooge known for saying?", "Bah humbug!",
+    ["Ho ho ho!","Merry and bright!","Jingle all the way!","Happy holidays!"], {category:"Movies", template:"extra"}),
+
+  Q("ex_009", "Which movie is often listed as one of the highest-grossing Christmas movies of all time?", "Home Alone",
+    ["Klaus","Prancer","Deck the Halls","Arthur Christmas"], {category:"Movies", template:"extra"}),
+
+  Q("ex_010", "What is a common top decoration for a Christmas tree?", "An angel",
+    ["A pumpkin","A shoe","A spoon","A baseball"], {category:"Traditions", template:"extra"})
+];
+
+/* ============================
+   Build the final bank
    ============================ */
 function buildBank(){
   const bank = [];
-
-  // Character -> movie
-  for (const cm of CHARACTERS){
-    const banned = new Set([cm.movie]);
-    bank.push(Q(
-      `Which Christmas movie features the character "${cm.character}"?`,
-      cm.movie,
-      pick4From(MOVIES, banned),
-      {category:"Movies"}
-    ));
-  }
-
-  // Reindeer direct facts
-  bank.push(...REINDEER_CLUES);
-
-  // Foods
-  bank.push(...FOOD_CLUES);
-
-  // Christmas story
-  bank.push(...STORY);
-
-  // World traditions (direct prompts)
-  for (const t of WORLD_TRADITIONS){
-    const others = WORLD_TRADITIONS.map(x=>x.thing).filter(x=>x!==t.thing);
-    bank.push(Q(
-      `Which holiday tradition/food is commonly associated with ${t.place}?`,
-      t.thing,
-      pick4From(others.concat(["Halloween candy hunt","Easter egg race","Fourth of July fireworks","Birthday piñata"]), new Set([t.thing])),
-      {category:"World Traditions"}
-    ));
-  }
-
-  // Toy/Gift clue questions (fixed)
-  bank.push(...TOY_CLUE_QUESTIONS);
-
-  // Songs: use UNIQUE token and/or UNIQUE 2-word prefix
-  const songToken = uniqueTokenMap(SONGS);
-  const songPrefix = uniquePrefixMap(SONGS);
-
-  for (const s of SONGS){
-    const token = songToken.get(s);
-    if (token){
-      const banned = new Set([s]);
-      const distractorPool = SONGS.filter(x=>x!==s && !words(x).includes(token));
-      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : SONGS.filter(x=>x!==s), banned);
-      bank.push(Q(
-        `Which Christmas song title includes the word "${token}"?`,
-        s,
-        distractors,
-        {category:"Songs"}
-      ));
-    }
-    const pref = songPrefix.get(s);
-    if (pref){
-      const banned = new Set([s]);
-      const distractorPool = SONGS.filter(x=>x!==s && !x.toLowerCase().startsWith(pref.toLowerCase()));
-      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : SONGS.filter(x=>x!==s), banned);
-      bank.push(Q(
-        `Which Christmas song title starts with "${pref}"?`,
-        s,
-        distractors,
-        {category:"Songs"}
-      ));
-    }
-  }
-
-  // Movies: unique token/prefix questions (not “which of these is a christmas movie”)
-  const movieToken = uniqueTokenMap(MOVIES);
-  const moviePrefix = uniquePrefixMap(MOVIES);
-
-  for (const m of MOVIES){
-    const token = movieToken.get(m);
-    if (token){
-      const banned = new Set([m]);
-      const distractorPool = MOVIES.filter(x=>x!==m && !words(x).includes(token));
-      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : MOVIES.filter(x=>x!==m), banned);
-      bank.push(Q(
-        `Which Christmas movie title includes the word "${token}"?`,
-        m,
-        distractors,
-        {category:"Movies"}
-      ));
-    }
-    const pref = moviePrefix.get(m);
-    if (pref){
-      const banned = new Set([m]);
-      const distractorPool = MOVIES.filter(x=>x!==m && !x.toLowerCase().startsWith(pref.toLowerCase()));
-      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : MOVIES.filter(x=>x!==m), banned);
-      bank.push(Q(
-        `Which Christmas movie title starts with "${pref}"?`,
-        m,
-        distractors,
-        {category:"Movies"}
-      ));
-    }
-  }
-
-  // Media placeholders
+  bank.push(...PREMADE);
+  bank.push(...buildMovieDescriptionQuestions());
+  bank.push(...buildClueQuestions());
   bank.push(...MEDIA_QUESTIONS);
+  bank.push(...EXTRA);
 
-  // Add more general clue-style questions to pad variety (still unambiguous)
-  const GENERAL = [
-    Q("What do you hang by the fireplace for gifts?", "Stocking", ["Backpack","Boot","Pillowcase","Hat"], {category:"Traditions"}),
-    Q("What plant do people kiss under at Christmas?", "Mistletoe", ["Cactus","Oak tree","Sunflower","Bamboo"], {category:"Traditions"}),
-    Q("What do people often put on top of a Christmas tree?", "Star", ["Spoon","Book","Sock","Ball"], {category:"Traditions"}),
-    Q("What is Santa's usual color in cartoons?", "Red", ["Blue","Green","Purple","Black"], {category:"Santa & Reindeer"}),
-    Q("What is the name of the mean green character who hates Christmas?", "The Grinch",
-      ["Frosty","Buddy","Scrooge (generic)","The Sandman"], {category:"Movies"})
-  ];
-  bank.push(...GENERAL);
-
-  // Ensure we’re well over 300: create safe variations using the same CLUE logic (no ambiguity).
-  // Variation: for each song with a unique token, create an additional “contains token” question with a different phrasing.
-  for (const s of SONGS){
-    const token = songToken.get(s);
-    if (!token) continue;
-    const banned = new Set([s]);
-    const pool = SONGS.filter(x=>x!==s && !words(x).includes(token));
-    const distractors = pick4From(pool.length>=4 ? pool : SONGS.filter(x=>x!==s), banned);
-    bank.push(Q(
-      `Name the Christmas song whose title contains "${token}".`,
-      s,
-      distractors,
-      {category:"Songs"}
-    ));
-  }
-
-  // Same for movies unique token variants
-  for (const m of MOVIES){
-    const token = movieToken.get(m);
-    if (!token) continue;
-    const banned = new Set([m]);
-    const pool = MOVIES.filter(x=>x!==m && !words(x).includes(token));
-    const distractors = pick4From(pool.length>=4 ? pool : MOVIES.filter(x=>x!==m), banned);
-    bank.push(Q(
-      `Name the Christmas movie whose title contains "${token}".`,
-      m,
-      distractors,
-      {category:"Movies"}
-    ));
-  }
-
-  // Deduplicate by prompt+answer just in case
+  // Dedup by id
   const seen = new Set();
-  const deduped = [];
+  const out = [];
   for (const q of bank){
-    const key = (q.prompt+"||"+q.answer).toLowerCase();
-    if (!seen.has(key)){
-      seen.add(key);
-      deduped.push(q);
+    if (!seen.has(q.id)){
+      seen.add(q.id);
+      out.push(q);
     }
   }
-  return deduped;
+
+  return out;
 }
 
 let QUESTION_BANK = buildBank();
 console.log("Question bank size:", QUESTION_BANK.length);
 
 /* ============================
-   Game Logic
+   Balanced quiz builder (reduces repeats)
+   - category rotation
+   - template caps
+   - no duplicate IDs in a game
+   ============================ */
+function buildQuizQuestions(){
+  const pool = [...QUESTION_BANK];
+  shuffle(pool);
+
+  // Bucket by category
+  const buckets = new Map();
+  for (const q of pool){
+    const cat = q.category || "General";
+    if (!buckets.has(cat)) buckets.set(cat, []);
+    buckets.get(cat).push(q);
+  }
+  for (const [_, arr] of buckets) shuffle(arr);
+
+  const categoryOrder = [
+    "Movies","Songs","Traditions","Food & Treats","Santa & Reindeer","Christmas Story",
+    "History","World Traditions","Folklore","Languages","Famous Gifts","Audio","Images","General"
+  ];
+
+  const chosen = [];
+  const usedIds = new Set();
+  const templateCount = new Map();
+
+  function canTake(q){
+    if (usedIds.has(q.id)) return false;
+    const t = q.template || "misc";
+    const count = templateCount.get(t) || 0;
+    return count < 7; // cap per template
+  }
+
+  let guard = 0;
+  while (chosen.length < 30 && guard < 5000){
+    guard++;
+    const cat = categoryOrder[chosen.length % categoryOrder.length];
+    const arr = buckets.get(cat) || [];
+    let picked = null;
+
+    while (arr.length){
+      const q = arr.pop();
+      if (canTake(q)){
+        picked = q;
+        break;
+      }
+    }
+
+    if (!picked){
+      const remaining = pool.filter(canTake);
+      if (!remaining.length) break;
+      picked = remaining[Math.floor(Math.random()*remaining.length)];
+    }
+
+    chosen.push(picked);
+    usedIds.add(picked.id);
+    const t = picked.template || "misc";
+    templateCount.set(t, (templateCount.get(t)||0) + 1);
+  }
+
+  // tie-break buffer
+  const extras = pool.filter(q => !usedIds.has(q.id));
+  shuffle(extras);
+  return chosen.concat(extras.slice(0, 50));
+}
+
+/* ============================
+   Game Logic / UI
    ============================ */
 const $ = (sel)=>document.querySelector(sel);
 
@@ -855,16 +896,9 @@ function startGame(newMode, teams){
   mode=newMode;
   teamCount=teams;
 
-  // Build per-mode pool:
-  // Group mode: still uses all questions because prompts are now all answerable without choices.
-  const pool = [...QUESTION_BANK];
-
-  shuffle(pool);
-  const main = pool.slice(0,30);
-  const extra = pool.slice(30,60); // tie-break buffer
-  gameQuestions = main.concat(extra);
-
-  qIndex=0;
+  // Balanced pick
+  gameQuestions = buildQuizQuestions();
+  qIndex = 0;
 
   screenStart.style.display="none";
   screenEnd.style.display="none";
@@ -1051,7 +1085,6 @@ function buildFiveChoices(q){
     if (set.size>=5) break;
     set.add(x);
   }
-  // if still short, draw other answers that are not the same
   if (set.size<5){
     const global = QUESTION_BANK.map(qq=>qq.answer).filter(a=>a && a!==q.answer);
     shuffle(global);
@@ -1108,7 +1141,6 @@ function onChoose(selected, correct, el){
 
     setTimeout(()=>nextQuestion(), 3200);
   } else {
-    // Group: host decides; we provide a hint based on early buzz
     const suggested = isCorrect
       ? ((buzzedTeam!==null && buzzWasBeforeReveal) ? 4 : 2)
       : -1;
@@ -1150,10 +1182,11 @@ function nextQuestion(){
   }
 
   if (qIndex>=gameQuestions.length){
-    const pool=[...QUESTION_BANK];
-    shuffle(pool);
-    gameQuestions = gameQuestions.concat(pool.slice(0,30));
+    // replenish buffer if needed
+    const more = buildQuizQuestions().slice(0,50);
+    gameQuestions = gameQuestions.concat(more);
   }
+
   renderQuestion();
 }
 
@@ -1197,6 +1230,7 @@ function endGroup(){
     `</div>`;
 }
 
+/* Solo score submit */
 btnSubmit.addEventListener("click", async ()=>{
   const name=(nameInput.value||"").trim();
   if (!name){
@@ -1216,13 +1250,6 @@ btnSubmit.addEventListener("click", async ()=>{
     submitStatus.textContent="Submission failed. Check your Apps Script deployment settings.";
   }
 });
-
-function stopAnyAudio(){
-  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(_){} });
-}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
-}
 
 goToStart();
 </script>
