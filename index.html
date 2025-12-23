@@ -5,34 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>🎄 Christmas Trivia Party Game</title>
 
-  <!-- Fancy-ish theme font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg1:#04162a;
-      --bg2:#0b2d2d;
+      --bg1:#04162a; --bg2:#0b2d2d;
       --card:rgba(0,0,0,.35);
-      --card2:rgba(255,255,255,.07);
       --text:#f5fbff;
-      --muted:#cfe3ff;
-      --accent:#ffcc33;
-      --good:#2ecc71;
-      --bad:#ff4d4d;
-      --ice:#75d6ff;
-      --btn:#1b6ef3;
-      --btn2:#17a2b8;
-      --shadow:0 12px 32px rgba(0,0,0,.35);
+      --muted:rgba(255,255,255,.78);
+      --good:#2ecc71; --bad:#ff4d4d;
       --ring:0 0 0 3px rgba(117,214,255,.35);
+      --shadow:0 12px 32px rgba(0,0,0,.35);
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
-      margin:0;
-      color:var(--text);
+      margin:0; color:var(--text);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
         radial-gradient(1200px 600px at 20% -10%, rgba(117,214,255,.22), transparent 60%),
@@ -40,8 +29,6 @@
         linear-gradient(160deg, var(--bg1), var(--bg2));
       overflow-x:hidden;
     }
-
-    /* Twinkly lights-ish header bar */
     .topbar{
       position:sticky; top:0; z-index:20;
       background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
@@ -57,13 +44,7 @@
       font-size:clamp(1.1rem, 2.4vw, 1.8rem);
       text-shadow:0 6px 20px rgba(0,0,0,.35);
     }
-    .brand .tag{font-family:system-ui,sans-serif;font-weight:600;font-size:.9rem;color:rgba(255,255,255,.8)}
-    .wrap{
-      max-width:980px;
-      margin:0 auto;
-      padding:1.2rem;
-    }
-
+    .wrap{max-width:980px;margin:0 auto;padding:1.2rem}
     .card{
       background:var(--card);
       border:1px solid rgba(255,255,255,.14);
@@ -72,10 +53,9 @@
       padding:1.1rem;
       margin:1rem 0;
     }
-    .card.soft{
+    .soft{
       background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18));
     }
-
     h1,h2,h3{
       font-family:"Mountains of Christmas", system-ui, sans-serif;
       margin:.2rem 0 .7rem;
@@ -84,303 +64,143 @@
     h1{font-size:clamp(2rem, 4.2vw, 3rem)}
     h2{font-size:clamp(1.5rem, 3.2vw, 2.1rem)}
     h3{font-size:clamp(1.2rem, 2.6vw, 1.6rem)}
-    p{color:rgba(255,255,255,.85); line-height:1.45}
-    .muted{color:rgba(255,255,255,.72)}
+    p{color:var(--muted); line-height:1.45}
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:1rem;
-    }
-    .col-6{grid-column: span 6}
-    .col-12{grid-column: span 12}
-    @media (max-width: 860px){
-      .col-6{grid-column: span 12}
-    }
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem}
+    .col-6{grid-column:span 6}
+    .col-12{grid-column:span 12}
+    @media(max-width:860px){.col-6{grid-column:span 12}}
 
     .btn{
-      appearance:none;
-      border:0;
-      border-radius:12px;
-      padding:.75rem 1rem;
-      color:white;
+      appearance:none;border:0;border-radius:12px;
+      padding:.75rem 1rem;color:white;
       background:linear-gradient(180deg, rgba(27,110,243,1), rgba(16,72,171,1));
       box-shadow:0 10px 24px rgba(0,0,0,.25);
-      cursor:pointer;
-      font-weight:750;
-      letter-spacing:.2px;
+      cursor:pointer;font-weight:800;letter-spacing:.2px;
       transition:transform .08s ease, filter .12s ease;
-      user-select:none;
-      width:100%;
+      user-select:none;width:100%;
     }
     .btn:hover{filter:brightness(1.05)}
     .btn:active{transform:translateY(1px)}
     .btn:focus{outline:none; box-shadow:var(--shadow), var(--ring)}
+    .btn.alt{background:linear-gradient(180deg, rgba(23,162,184,1), rgba(13,117,134,1))}
+    .btn.green{background:linear-gradient(180deg, rgba(46,204,113,1), rgba(26,145,78,1))}
+    .btn.gold{background:linear-gradient(180deg, rgba(255,204,51,1), rgba(196,143,20,1));color:#13202a}
+    .btn.red{background:linear-gradient(180deg, rgba(255,77,77,1), rgba(186,37,37,1))}
+    .btn.small{padding:.5rem .7rem;border-radius:10px;width:auto;font-weight:800}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
 
-    .btn.alt{
-      background:linear-gradient(180deg, rgba(23,162,184,1), rgba(13,117,134,1));
-    }
-    .btn.green{
-      background:linear-gradient(180deg, rgba(46,204,113,1), rgba(26,145,78,1));
-    }
-    .btn.gold{
-      background:linear-gradient(180deg, rgba(255,204,51,1), rgba(196,143,20,1));
-      color:#13202a;
-    }
-    .btn.red{
-      background:linear-gradient(180deg, rgba(255,77,77,1), rgba(186,37,37,1));
-    }
-    .btn.small{
-      padding:.5rem .7rem;
-      border-radius:10px;
-      width:auto;
-      font-weight:700;
-    }
-    .btn.disabled, .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      filter:saturate(.7);
-      transform:none !important;
-    }
-
-    .pillbar{
-      display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center;
-      margin:.6rem 0 0;
-    }
+    .pillbar{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0 0}
     .pill{
       background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.12);
-      padding:.35rem .6rem;
-      border-radius:999px;
-      font-size:.9rem;
-      color:rgba(255,255,255,.85);
+      padding:.35rem .6rem;border-radius:999px;
+      font-size:.9rem;color:rgba(255,255,255,.85);
+      font-weight:750;
     }
 
-    /* Quiz UI */
-    #screenStart, #screenQuiz, #screenEnd {display:none}
+    #screenStart,#screenQuiz,#screenEnd{display:none}
     #screenStart{display:block}
 
-    .row{
-      display:flex;
-      gap:1rem;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .qmeta{
-      display:flex;
-      gap:.6rem;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .qmeta .pill{font-weight:700}
+    .row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .qmeta{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
 
-    .question{
-      font-size:clamp(1.1rem, 2.2vw, 1.45rem);
-      margin:.2rem 0 .8rem;
-    }
+    .question{font-size:clamp(1.1rem, 2.2vw, 1.45rem);margin:.2rem 0 .8rem}
+    .media{margin:.7rem 0 1rem;display:flex;justify-content:center;align-items:center}
+    .media img{max-width:100%;max-height:320px;border-radius:14px;border:1px solid rgba(255,255,255,.16);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+    .media audio{width:min(520px, 100%);border-radius:12px}
 
-    .media{
-      margin:.7rem 0 1rem;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-    .media img{
-      max-width:100%;
-      max-height:320px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow:0 12px 30px rgba(0,0,0,.35);
-    }
-    .media audio{
-      width:min(520px, 100%);
-      border-radius:12px;
-    }
-
-    .choices{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:.55rem;
-      margin:.6rem 0 0;
-    }
-
+    .choices{display:grid;grid-template-columns:1fr;gap:.55rem;margin:.6rem 0 0}
     .choice{
-      text-align:left;
-      background:rgba(255,255,255,.10);
+      text-align:left;background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.15);
-      border-radius:14px;
-      padding:.75rem .85rem;
-      cursor:pointer;
-      font-weight:750;
-      line-height:1.25;
+      border-radius:14px;padding:.75rem .85rem;
+      cursor:pointer;font-weight:850;line-height:1.25;
       transition:transform .06s ease, background .12s ease, border-color .12s ease;
       user-select:none;
     }
     .choice:hover{background:rgba(255,255,255,.14)}
     .choice:active{transform:translateY(1px)}
-    .choice.correct{
-      background:rgba(46,204,113,.22);
-      border-color:rgba(46,204,113,.55);
-    }
-    .choice.wrong{
-      background:rgba(255,77,77,.18);
-      border-color:rgba(255,77,77,.55);
-    }
-    .choice.disabled{
-      opacity:.8;
-      cursor:not-allowed;
-    }
+    .choice.correct{background:rgba(46,204,113,.22);border-color:rgba(46,204,113,.55)}
+    .choice.wrong{background:rgba(255,77,77,.18);border-color:rgba(255,77,77,.55)}
+    .choice.disabled{opacity:.85;cursor:not-allowed}
 
     .feedback{
-      margin:.85rem 0 0;
-      padding:.75rem;
-      border-radius:14px;
+      margin:.85rem 0 0;padding:.75rem;border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
       background:rgba(0,0,0,.25);
       display:none;
+      font-weight:750;
     }
     .feedback.show{display:block}
-    .feedback.good{border-color:rgba(46,204,113,.55); background:rgba(46,204,113,.12)}
-    .feedback.bad{border-color:rgba(255,77,77,.55); background:rgba(255,77,77,.10)}
+    .feedback.good{border-color:rgba(46,204,113,.55);background:rgba(46,204,113,.12)}
+    .feedback.bad{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.10)}
 
-    /* Group controls */
-    .groupControls{
-      margin-top:1rem;
-      display:grid;
-      grid-template-columns: repeat(12,1fr);
-      gap:.7rem;
-    }
-    .gc-left{grid-column: span 8}
-    .gc-right{grid-column: span 4}
-    @media (max-width:860px){
-      .gc-left,.gc-right{grid-column: span 12}
-    }
-
-    .buzzRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.5rem;
-      align-items:center;
-    }
-    .buzzTag{
-      background:rgba(255,204,51,.16);
-      border:1px solid rgba(255,204,51,.35);
-      padding:.35rem .6rem;
-      border-radius:999px;
-      font-weight:800;
-      color:#ffe9a8;
-    }
-
-    /* Scoreboard */
-    .scoreboard{
-      display:flex;
-      gap:.7rem;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin:.4rem 0 0;
-    }
+    .scoreboard{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin:.4rem 0 0}
     .teamCard{
       background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
-      padding:.7rem .8rem;
-      min-width:200px;
-      box-shadow:0 10px 20px rgba(0,0,0,.18);
+      border-radius:16px;padding:.7rem .8rem;
+      min-width:210px;box-shadow:0 10px 20px rgba(0,0,0,.18);
     }
     .teamName{
-      font-weight:900;
-      font-size:1.05rem;
-      letter-spacing:.2px;
-      padding:.25rem .4rem;
-      border-radius:10px;
-      display:inline-block;
-      cursor:text;
-      background:rgba(0,0,0,.18);
+      font-weight:900;font-size:1.05rem;letter-spacing:.2px;
+      padding:.25rem .4rem;border-radius:10px;display:inline-block;
+      cursor:text;background:rgba(0,0,0,.18);
       border:1px dashed rgba(255,255,255,.18);
     }
-    .teamName[contenteditable="true"]{outline:none; box-shadow:var(--ring)}
-    .teamScore{
-      margin-top:.55rem;
-      font-size:2rem;
-      font-weight:950;
-      letter-spacing:.4px;
-    }
-    .scoreBtns{
-      display:flex;
-      flex-wrap:wrap;
-      gap:.4rem;
-      margin-top:.55rem;
-      justify-content:center;
+    .teamName[contenteditable="true"]{outline:none;box-shadow:var(--ring)}
+    .teamScore{margin-top:.55rem;font-size:2rem;font-weight:950;letter-spacing:.4px}
+    .scoreBtns{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem;justify-content:center}
+    .mini{font-size:.92rem;color:rgba(255,255,255,.75);margin-top:.35rem}
+
+    .groupControls{margin-top:1rem;display:grid;grid-template-columns:repeat(12,1fr);gap:.7rem}
+    .gc-left{grid-column:span 8}
+    .gc-right{grid-column:span 4}
+    @media(max-width:860px){.gc-left,.gc-right{grid-column:span 12}}
+
+    .buzzRow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+    .buzzTag{
+      background:rgba(255,204,51,.16);
+      border:1px solid rgba(255,204,51,.35);
+      padding:.35rem .6rem;border-radius:999px;
+      font-weight:900;color:#ffe9a8;
     }
 
-    .mini{
-      font-size:.92rem;
-      color:rgba(255,255,255,.75);
-      margin-top:.35rem;
-    }
-
-    /* End screen */
-    .bigScore{
-      font-size:clamp(2rem, 4vw, 3rem);
-      font-weight:950;
-      color:#ffe9a8;
-      text-shadow:0 12px 26px rgba(0,0,0,.35);
-    }
+    .bigScore{font-size:clamp(2rem, 4vw, 3rem);font-weight:950;color:#ffe9a8;text-shadow:0 12px 26px rgba(0,0,0,.35)}
     input[type="text"]{
-      width:100%;
-      padding:.85rem .9rem;
-      border-radius:14px;
+      width:100%;padding:.85rem .9rem;border-radius:14px;
       border:1px solid rgba(255,255,255,.22);
-      background:rgba(0,0,0,.28);
-      color:var(--text);
-      font-weight:750;
-      font-size:1rem;
-      outline:none;
+      background:rgba(0,0,0,.28);color:var(--text);
+      font-weight:800;font-size:1rem;outline:none;
     }
     input[type="text"]:focus{box-shadow:var(--ring)}
 
-    /* Snow layer */
-    .snowflakes{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:50;
-      opacity:.8;
-    }
+    .snowflakes{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.8}
     .snowflake{
-      position:fixed;
-      top:-10%;
-      color:white;
-      text-shadow:0 0 10px rgba(255,255,255,.55);
+      position:fixed;top:-10%;
+      color:white;text-shadow:0 0 10px rgba(255,255,255,.55);
       user-select:none;
-      animation-name:snowfall, sway;
-      animation-timing-function:linear, ease-in-out;
-      animation-iteration-count:infinite, infinite;
-      will-change: transform, top;
-      opacity:.9;
-      font-size:1.2rem;
+      animation-name:snowfall,sway;
+      animation-timing-function:linear,ease-in-out;
+      animation-iteration-count:infinite,infinite;
+      will-change:transform,top;
+      opacity:.9;font-size:1.2rem;
     }
-    @keyframes snowfall{
-      0%{top:-10%}
-      100%{top:110%}
-    }
-    @keyframes sway{
-      0%,100%{transform:translateX(0)}
-      50%{transform:translateX(70px)}
-    }
-    /* spread flakes */
+    @keyframes snowfall{0%{top:-10%}100%{top:110%}}
+    @keyframes sway{0%,100%{transform:translateX(0)}50%{transform:translateX(70px)}}
     .snowflake:nth-child(1){left:2%; animation-duration:12s, 4.2s; animation-delay:0s,0s}
-    .snowflake:nth-child(2){left:10%; animation-duration:10s, 3.8s; animation-delay:1s,.4s}
-    .snowflake:nth-child(3){left:18%; animation-duration:14s, 4.5s; animation-delay:2s,1.1s}
-    .snowflake:nth-child(4){left:28%; animation-duration:11s, 4s; animation-delay:0.5s,.2s}
-    .snowflake:nth-child(5){left:36%; animation-duration:13s, 4.7s; animation-delay:1.8s,1.6s}
-    .snowflake:nth-child(6){left:46%; animation-duration:9.5s, 3.4s; animation-delay:0.2s,.7s}
-    .snowflake:nth-child(7){left:55%; animation-duration:15s, 4.9s; animation-delay:3s,1.9s}
-    .snowflake:nth-child(8){left:64%; animation-duration:10.5s, 3.9s; animation-delay:1.1s,.9s}
-    .snowflake:nth-child(9){left:74%; animation-duration:12.5s, 4.1s; animation-delay:2.4s,1.2s}
-    .snowflake:nth-child(10){left:82%; animation-duration:9.8s, 3.6s; animation-delay:0.7s,.5s}
-    .snowflake:nth-child(11){left:90%; animation-duration:14.2s, 4.6s; animation-delay:2.8s,1.8s}
-    .snowflake:nth-child(12){left:96%; animation-duration:11.6s, 4.0s; animation-delay:1.4s,.8s}
+    .snowflake:nth-child(2){left:10%;animation-duration:10s, 3.8s; animation-delay:1s,.4s}
+    .snowflake:nth-child(3){left:18%;animation-duration:14s, 4.5s; animation-delay:2s,1.1s}
+    .snowflake:nth-child(4){left:28%;animation-duration:11s, 4s;   animation-delay:.5s,.2s}
+    .snowflake:nth-child(5){left:36%;animation-duration:13s, 4.7s; animation-delay:1.8s,1.6s}
+    .snowflake:nth-child(6){left:46%;animation-duration:9.5s,3.4s; animation-delay:.2s,.7s}
+    .snowflake:nth-child(7){left:55%;animation-duration:15s,4.9s;  animation-delay:3s,1.9s}
+    .snowflake:nth-child(8){left:64%;animation-duration:10.5s,3.9s;animation-delay:1.1s,.9s}
+    .snowflake:nth-child(9){left:74%;animation-duration:12.5s,4.1s;animation-delay:2.4s,1.2s}
+    .snowflake:nth-child(10){left:82%;animation-duration:9.8s,3.6s;animation-delay:.7s,.5s}
+    .snowflake:nth-child(11){left:90%;animation-duration:14.2s,4.6s;animation-delay:2.8s,1.8s}
+    .snowflake:nth-child(12){left:96%;animation-duration:11.6s,4s;animation-delay:1.4s,.8s}
   </style>
 </head>
 
@@ -392,50 +212,44 @@
   </div>
 
   <div class="topbar">
-    <div class="brand">🎄 Christmas Trivia Party Game <span class="tag">Solo + Teams</span></div>
+    <div class="brand">🎄 Christmas Trivia Party Game</div>
   </div>
 
   <div class="wrap">
     <!-- START -->
     <section id="screenStart" class="card soft">
       <h1>Holiday Trivia</h1>
-      <p class="muted">
-        Built for ages 5+ (and adults who insist they “totally know this one”).
-        <br/>Solo mode auto-scores and posts to your Google Sheet. Group mode is host-operated.
+      <p>
+        Solo mode auto-scores (+2 / -1) and posts to your Google Sheet.
+        Group mode is host-operated with early buzz potential.
       </p>
 
       <div class="grid">
         <div class="col-6 card">
           <h2>Solo Play</h2>
-          <p class="muted">Choices show immediately. +2 correct, -1 wrong. 30 random questions.</p>
+          <p>Choices show immediately. 30 random questions.</p>
           <button id="btnSolo" class="btn green">Play Solo</button>
         </div>
 
         <div class="col-6 card">
           <h2>Group Play</h2>
-          <p class="muted">
-            Question shows first. Teams can buzz in before choices show for double points (host decides).
-          </p>
-          <div class="grid">
-            <div class="col-12">
-              <button id="btnGroup2" class="btn alt">Play Group (2 Teams)</button>
-              <button id="btnGroup3" class="btn alt">Play Group (3 Teams)</button>
-              <button id="btnGroup4" class="btn alt">Play Group (4 Teams)</button>
-            </div>
-          </div>
+          <p>Question shows first. Teams can buzz early for double eligibility.</p>
+          <button id="btnGroup2" class="btn alt">Play Group (2 Teams)</button>
+          <button id="btnGroup3" class="btn alt">Play Group (3 Teams)</button>
+          <button id="btnGroup4" class="btn alt">Play Group (4 Teams)</button>
+
           <div class="pillbar">
-            <span class="pill">Host-controlled</span>
-            <span class="pill">Buzz + Reveal</span>
+            <span class="pill">No “Which of these…” prompts</span>
+            <span class="pill">Early buzz friendly</span>
             <span class="pill">Manual scoring</span>
-            <span class="pill">Tie-breaker</span>
           </div>
         </div>
 
         <div class="col-12 card">
-          <h3>Optional media folders (if you want audio/image questions)</h3>
-          <p class="muted" style="margin:0">
-            Put files in <b>/audio</b> and <b>/images</b> in your repo. The game has placeholders like
-            <code>audio/jingle_bells.mp3</code> and <code>images/home_alone.jpg</code>.
+          <h3>Optional media folders</h3>
+          <p style="margin:0">
+            Put files in <b>/audio</b> and <b>/images</b> in your repo.
+            Questions reference placeholders like <code>audio/jingle_bells.mp3</code> and <code>images/home_alone.jpg</code>.
           </p>
         </div>
       </div>
@@ -445,7 +259,7 @@
     <section id="screenQuiz" class="card soft">
       <div id="scoreboardWrap" class="card" style="display:none">
         <h3 style="margin-bottom:.2rem">Scoreboard</h3>
-        <div class="mini">Click a team name to edit it. Scores can go negative. Because humans.</div>
+        <div class="mini">Click a team name to edit. Scores can go negative.</div>
         <div id="scoreboard" class="scoreboard"></div>
       </div>
 
@@ -474,7 +288,7 @@
             <h3 style="margin:.1rem 0 .4rem">Group Controls</h3>
 
             <div class="buzzRow" style="margin:.45rem 0 .6rem">
-              <span class="muted" style="font-weight:750">Buzz:</span>
+              <span style="font-weight:850">Buzz:</span>
               <div id="buzzButtons" class="buzzRow"></div>
               <span id="buzzStatus" class="buzzTag" style="display:none"></span>
               <button id="btnClearBuzz" class="btn small red" style="display:none">Clear Buzz</button>
@@ -487,15 +301,12 @@
             </div>
 
             <div class="mini" style="margin-top:.55rem">
-              Tip: If a team buzzes <b>before</b> Reveal, a correct answer is worth <b>double</b> (host decides).
+              If a team buzzes before reveal, a correct answer can be worth <b>+4</b> (double) instead of +2.
             </div>
           </div>
 
           <div class="gc-right card">
-            <h3 style="margin:.1rem 0 .4rem">Quick Score</h3>
-            <p class="muted" style="margin:.15rem 0 .6rem">
-              After choosing an answer, use the team buttons above or the scoreboard buttons.
-            </p>
+            <h3 style="margin:.1rem 0 .4rem">Quick Score Hint</h3>
             <div id="scoreHint" class="pill" style="display:none; text-align:left"></div>
           </div>
         </div>
@@ -508,7 +319,7 @@
 
       <div id="soloEndBlock" style="display:none">
         <div class="bigScore" id="endScore">Score: 0</div>
-        <p class="muted">Enter your name to save your score to the party leaderboard.</p>
+        <p>Enter your name to save your score to the leaderboard.</p>
 
         <div class="grid">
           <div class="col-6">
@@ -537,18 +348,15 @@
 <script>
 /* ============================
    Google Sheets Web App URL
-   (Updated with your URL)
    ============================ */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7ZsgfPb-dw1oxroQT5e3WyhDFspOP3yalxywQReOviGqGpx_slZ07LmnnRgnUJ-ikxw/exec";
 
 /* ============================
-   Question Bank
-   Requirements:
-   - 300–500 questions (this file generates 320+ from hardcoded lists)
-   - Each question is 5-choice MCQ (1 correct + 4 distractors)
+   Question Model
+   - prompt is always answerable WITHOUT seeing choices (group-friendly)
+   - 1 correct answer only
+   - distractors are constructed to not match the clue
    ============================ */
-
-/** Helper to build questions */
 function Q(prompt, answer, distractors, meta={}) {
   return {
     prompt,
@@ -560,38 +368,16 @@ function Q(prompt, answer, distractors, meta={}) {
   };
 }
 
-/** Hardcoded knowledge lists (still all inside this file) */
+/* ============================
+   Data Lists
+   ============================ */
 const MOVIES = [
   "Home Alone","Elf","The Polar Express","How the Grinch Stole Christmas","A Christmas Story",
   "Miracle on 34th Street","The Santa Clause","National Lampoon's Christmas Vacation",
   "It's a Wonderful Life","Rudolph the Red-Nosed Reindeer","Frosty the Snowman",
   "A Charlie Brown Christmas","Arthur Christmas","Klaus","The Muppet Christmas Carol",
-  "The Nightmare Before Christmas","Jingle All the Way","The Holiday","Love Actually",
-  "Scrooged","White Christmas","Prancer","Christmas with the Kranks","Deck the Halls",
-  "The Grinch (2018)","The Christmas Chronicles","Four Christmases","Happiest Season"
-];
-
-const NOT_XMAS_MOVIES = [
-  "Finding Nemo","Toy Story","The Lion King","Jurassic Park","Harry Potter","The Avengers",
-  "Spider-Man","Star Wars","Moana","Shrek","Frozen (not specifically Christmas)","Coco"
-];
-
-const CHARACTERS = [
-  {character:"Kevin McCallister", movie:"Home Alone"},
-  {character:"Buddy", movie:"Elf"},
-  {character:"The Grinch", movie:"How the Grinch Stole Christmas"},
-  {character:"Ralphie Parker", movie:"A Christmas Story"},
-  {character:"Scott Calvin", movie:"The Santa Clause"},
-  {character:"Clark Griswold", movie:"National Lampoon's Christmas Vacation"},
-  {character:"George Bailey", movie:"It's a Wonderful Life"},
-  {character:"Frosty", movie:"Frosty the Snowman"},
-  {character:"Charlie Brown", movie:"A Charlie Brown Christmas"},
-  {character:"Ebenezer Scrooge", movie:"The Muppet Christmas Carol"},
-  {character:"Jack Skellington", movie:"The Nightmare Before Christmas"},
-  {character:"Howard Langston", movie:"Jingle All the Way"},
-  {character:"Santa", movie:"Miracle on 34th Street"},
-  {character:"Arthur", movie:"Arthur Christmas"},
-  {character:"Jesper", movie:"Klaus"}
+  "The Nightmare Before Christmas","Jingle All the Way","Christmas with the Kranks",
+  "Scrooged","White Christmas","Prancer","The Christmas Chronicles","Deck the Halls","Four Christmases"
 ];
 
 const SONGS = [
@@ -601,253 +387,376 @@ const SONGS = [
   "Carol of the Bells","Little Drummer Boy","Let It Snow! Let It Snow! Let It Snow!",
   "Frosty the Snowman","Rudolph the Red-Nosed Reindeer","Rockin' Around the Christmas Tree",
   "Jingle Bell Rock","White Christmas","Silver Bells","Santa Claus Is Comin' to Town",
-  "Have Yourself a Merry Little Christmas","Winter Wonderland","It's Beginning to Look a Lot Like Christmas",
-  "Blue Christmas","Last Christmas","All I Want for Christmas Is You"
+  "Have Yourself a Merry Little Christmas","Winter Wonderland",
+  "It's Beginning to Look a Lot Like Christmas","Blue Christmas","Last Christmas",
+  "All I Want for Christmas Is You"
 ];
 
-const NON_XMAS_SONGS = [
+const NON_SONGS = [
   "Happy Birthday","Twinkle Twinkle Little Star","Old MacDonald Had a Farm","Baby Shark",
   "Let It Go","Shake It Off","Uptown Funk","We Will Rock You","Hey Jude","Supercalifragilisticexpialidocious"
 ];
 
 const REINDEER = ["Dasher","Dancer","Prancer","Vixen","Comet","Cupid","Donner","Blitzen","Rudolph"];
 
-const GIFTS = [
-  "Tickle Me Elmo","Furby","Cabbage Patch Kids","Nintendo Switch","Lego Set",
-  "PlayStation","Xbox","Tamagotchi","Beanie Babies","Rubik's Cube"
-];
-
-const FOODS = [
-  "Gingerbread","Candy cane","Eggnog","Fruitcake","Hot chocolate",
-  "Sugar cookies","Roast turkey","Ham","Peppermint bark","Yule log cake"
-];
+const FOODS = ["Gingerbread","Candy cane","Eggnog","Fruitcake","Hot chocolate","Sugar cookies","Peppermint bark","Yule log cake"];
 
 const WORLD_TRADITIONS = [
   {thing:"Christmas crackers", place:"United Kingdom"},
-  {thing:"Shoes left out for gifts", place:"Netherlands"},
   {thing:"Advent calendar", place:"Germany"},
   {thing:"Panettone", place:"Italy"},
-  {thing:"St. Lucia Day", place:"Sweden"}
+  {thing:"St. Lucia Day", place:"Sweden"},
+  {thing:"Shoes left out for gifts", place:"Netherlands"}
 ];
 
-const NATIVITY = [
+/* Movie characters (good group-friendly prompts) */
+const CHARACTERS = [
+  {character:"Kevin McCallister", movie:"Home Alone"},
+  {character:"Buddy", movie:"Elf"},
+  {character:"The Grinch", movie:"How the Grinch Stole Christmas"},
+  {character:"Ralphie Parker", movie:"A Christmas Story"},
+  {character:"Scott Calvin", movie:"The Santa Clause"},
+  {character:"Clark Griswold", movie:"National Lampoon's Christmas Vacation"},
+  {character:"George Bailey", movie:"It's a Wonderful Life"},
+  {character:"Ebenezer Scrooge", movie:"The Muppet Christmas Carol"},
+  {character:"Jack Skellington", movie:"The Nightmare Before Christmas"},
+  {character:"Jesper", movie:"Klaus"}
+];
+
+/* ============================
+   Toy/Gift questions are now CLUE-BASED (single correct)
+   ============================ */
+const TOY_CLUE_QUESTIONS = [
+  Q(
+    "Which hard-to-find 1996 toy featured a giggling character from a popular children's show (Sesame Street)?",
+    "Tickle Me Elmo",
+    ["Goofy Gus","Wiggling Wralph","Crazy Cookie Monster","Laughing Larry"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which late-1990s electronic pet toy was famous for speaking its own made-up language (\"Furbish\")?",
+    "Furby",
+    ["Chatter Chipmunk","Blinking Bunny","Robo Raccoon","Purr-o-matic Kitty"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which pocket-sized digital pet toy needed feeding and care or it would 'get sick'?",
+    "Tamagotchi",
+    ["Nano Narwhal","Pocket Panda Pal","Bit-Baby Buddy","Mini Monster Mate"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which doll line famously came with 'adoption papers' and unique names?",
+    "Cabbage Patch Kids",
+    ["Carrot Case Kids","Turnip Town Tots","Pumpkin Patch Pals","Nursery Nibblers"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which small collectible stuffed toys became famous for having heart-shaped tags?",
+    "Beanie Babies",
+    ["Stuffed Sprites","Plush Poppers","Tag-a-Toys","Snuggle Nuggets"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which game console is known for having detachable controllers called 'Joy-Cons'?",
+    "Nintendo Switch",
+    ["PlayStation","Xbox","GameSphere","UltraStation"],
+    {category:"Famous Gifts"}
+  ),
+  Q(
+    "Which puzzle toy is a colorful cube you twist to match colors on each side?",
+    "Rubik's Cube",
+    ["Color Spinner","Twist-a-Box","Rainbow Brick","Puzzle Prism"],
+    {category:"Famous Gifts"}
+  )
+];
+
+/* ============================
+   Clue maps (group-friendly)
+   ============================ */
+const FOOD_CLUES = [
+  Q("Which holiday treat is often a brown, spiced cookie used to build little houses?", "Gingerbread",
+    ["Eggnog","Fruitcake","Hot chocolate","Peppermint bark"], {category:"Food & Treats"}),
+  Q("Which holiday candy is usually a striped peppermint stick shaped like a cane?", "Candy cane",
+    ["Yule log cake","Sugar cookies","Fruitcake","Eggnog"], {category:"Food & Treats"}),
+  Q("Which creamy holiday drink is often served cold and sometimes topped with nutmeg?", "Eggnog",
+    ["Hot chocolate","Fruit punch","Apple juice","Lemonade"], {category:"Food & Treats"}),
+  Q("Which holiday dessert is a very dense cake that people joke lasts forever?", "Fruitcake",
+    ["Gingerbread","Sugar cookies","Yule log cake","Peppermint bark"], {category:"Food & Treats"}),
+  Q("Which warm sweet drink is often topped with marshmallows in winter?", "Hot chocolate",
+    ["Eggnog","Fruitcake","Candy cane","Panettone"], {category:"Food & Treats"})
+];
+
+const REINDEER_CLUES = [
+  Q("Which reindeer is famous for having a red nose?", "Rudolph",
+    ["Dasher","Comet","Cupid","Vixen"], {category:"Santa & Reindeer"}),
+  Q("Which two reindeer names are often linked with 'thunder' and 'lightning'?", "Donner and Blitzen",
+    ["Dasher and Dancer","Comet and Cupid","Prancer and Vixen","Rudolph and Frosty"], {category:"Santa & Reindeer"})
+];
+
+const STORY = [
   Q("Where was Jesus born (Christmas story)?", "Bethlehem",
     ["Nazareth","Jerusalem","Rome","Capernaum"], {category:"Christmas Story"}),
-  Q("Who visited baby Jesus with gifts in the Christmas story?", "Wise men (Magi)",
-    ["Shepherds only","Roman soldiers","Kings of England","Fishermen"], {category:"Christmas Story"}),
-  Q("What 3 gifts did the wise men bring (Christmas story)?", "Gold, frankincense, and myrrh",
-    ["Gold, silver, and bronze","Toys, candy, and cookies","Bread, milk, and honey","Perfume, silk, and spices"], {category:"Christmas Story"}),
-  Q("Where did Mary and Joseph stay the night Jesus was born?", "In a stable (because the inn was full)",
-    ["In a palace","In a school","In a temple","In a boat"], {category:"Christmas Story"}),
+  Q("Who visited baby Jesus with gifts (Christmas story)?", "Wise men (Magi)",
+    ["Roman soldiers","Kings of England","Fishermen","Temple guards"], {category:"Christmas Story"}),
   Q("What guided the wise men to Jesus?", "A star",
-    ["A rainbow","A comet only","A map from Caesar","A dove"], {category:"Christmas Story"})
+    ["A rainbow","A map from Caesar","A dove","A lighthouse"], {category:"Christmas Story"}),
+  Q("What 3 gifts did the wise men bring?", "Gold, frankincense, and myrrh",
+    ["Gold, silver, and bronze","Bread, milk, and honey","Perfume, silk, and spices","Toys, candy, and cookies"], {category:"Christmas Story"})
 ];
 
-/* Explicit base questions (handwritten) */
-const BASE_QUESTIONS = [
-  Q("What color is Santa's suit usually shown as?", "Red",
-    ["Blue","Green","Purple","Black"], {category:"Santa & Reindeer"}),
-  Q("What do you hang by the fireplace for gifts?", "Stocking",
-    ["Backpack","Boot","Pillowcase","Hat"], {category:"Traditions"}),
-  Q("What is the name of the snowman who came to life in a classic song/movie?", "Frosty",
-    ["Chilly","Snowbert","Flakey","Mr. Icicle"], {category:"Songs & Specials"}),
-  Q("Which animal is often shown pulling Santa's sleigh?", "Reindeer",
-    ["Horses","Dogs","Penguins","Camels"], {category:"Santa & Reindeer"}),
-  Q("What plant do people kiss under at Christmas?", "Mistletoe",
-    ["Cactus","Oak tree","Sunflower","Bamboo"], {category:"Traditions"}),
-
-  Q("In 'Home Alone', what is Kevin's last name?", "McCallister",
-    ["McDonald","McGregor","McCartney","McGuffin"], {category:"Movies"}),
-  Q("In 'Elf', what is Buddy's favorite food group?", "Candy",
-    ["Broccoli","Fish","Cheese","Rice"], {category:"Movies"}),
-  Q("Which movie features a boy traveling by train to the North Pole?", "The Polar Express",
-    ["Elf","Home Alone","Klaus","Arthur Christmas"], {category:"Movies"}),
-
-  Q("Which one is a Christmas song?", "Jingle Bells",
-    ["Happy Birthday","Baby Shark","Let It Go","Twinkle Twinkle Little Star"], {category:"Songs"}),
-  Q("Which reindeer has a red nose?", "Rudolph",
-    ["Dasher","Comet","Cupid","Vixen"], {category:"Santa & Reindeer"}),
-
-  Q("What do people often put on top of a Christmas tree?", "Star",
-    ["Spoon","Book","Sock","Ball"], {category:"Traditions"}),
-  Q("What are candy canes usually flavored like?", "Peppermint",
-    ["Banana","Chocolate","Pickle","Pizza"], {category:"Food & Treats"}),
-
-  Q("Which of these is a Christmas movie?", "Elf",
-    ["Jurassic Park","Finding Nemo","The Avengers","Moana"], {category:"Movies"}),
-
-  Q("Which of these is a famous holiday toy?", "Tickle Me Elmo",
-    ["Paperclip Pro","Spoon Racer","Sock Robot","Invisible Hat"], {category:"Famous Gifts"}),
-
-  // Audio placeholders (you add the actual files to /audio)
-  Q("AUDIO: Identify this Christmas song (short clip).", "Jingle Bells",
+/* Audio and image placeholders (still clue-based, never “which of these”) */
+const MEDIA_QUESTIONS = [
+  Q("AUDIO: Identify this Christmas song from the short clip.", "Jingle Bells",
     ["Silent Night","Deck the Halls","Winter Wonderland","Jingle Bell Rock"],
     {category:"Audio", type:"audio", mediaSrc:"audio/jingle_bells.mp3"}),
 
-  Q("AUDIO: Identify this Christmas song (short clip).", "Silent Night",
-    ["O Holy Night","Joy to the World","Away in a Manger","The First Noel"],
-    {category:"Audio", type:"audio", mediaSrc:"audio/silent_night.mp3"}),
-
-  // Image placeholders (you add actual files to /images)
-  Q("IMAGE: Which movie is this scene from?", "Home Alone",
-    ["Elf","A Christmas Story","The Santa Clause","The Grinch (2018)"],
-    {category:"Images", type:"image", mediaSrc:"images/home_alone.jpg"}),
-
-  Q("IMAGE: What holiday treat is shown here?", "Gingerbread",
-    ["Fruitcake","Eggnog","Candy cane","Peppermint bark"],
-    {category:"Images", type:"image", mediaSrc:"images/gingerbread.jpg"})
+  Q("IMAGE: Name the movie shown in this picture.", "Home Alone",
+    ["Elf","A Christmas Story","The Santa Clause","How the Grinch Stole Christmas"],
+    {category:"Images", type:"image", mediaSrc:"images/home_alone.jpg"})
 ];
 
-/* Generate lots of extra questions from the lists (still all local/hardcoded) */
-function buildGeneratedQuestions(){
-  const out = [];
+/* ============================
+   Generator helpers that AVOID ambiguous “category membership”
+   - Uses unique tokens/prefixes so only 1 answer fits.
+   - This prevents “multiple correct” choices like your song screenshot.
+   ============================ */
+const STOP_WORDS = new Set(["the","a","an","and","of","to","in","for","is","it","on","at","ye","o"]);
+
+function words(s){
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s!']/g," ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter(w=>!STOP_WORDS.has(w));
+}
+
+function uniqueTokenMap(items){
+  const freq = new Map();
+  const itemWords = new Map();
+  for (const it of items){
+    const ws = words(it);
+    itemWords.set(it, ws);
+    for (const w of new Set(ws)){
+      freq.set(w, (freq.get(w)||0)+1);
+    }
+  }
+  // pick best unique token per item (unique + longer)
+  const tokenFor = new Map();
+  for (const it of items){
+    const ws = itemWords.get(it);
+    const unique = ws.filter(w=>freq.get(w)===1);
+    unique.sort((a,b)=>b.length-a.length);
+    tokenFor.set(it, unique[0] || null);
+  }
+  return tokenFor;
+}
+
+function uniquePrefixMap(items){
+  const freq = new Map();
+  const prefixFor = new Map();
+  const splitWords = new Map();
+  for (const it of items){
+    const ws = it.replace(/[^a-z0-9\s!']/gi," ").trim().split(/\s+/).filter(Boolean);
+    splitWords.set(it, ws);
+  }
+  // build 2-word prefixes
+  for (const it of items){
+    const ws = splitWords.get(it);
+    if (ws.length >= 2){
+      const p = (ws[0] + " " + ws[1]).toLowerCase();
+      freq.set(p, (freq.get(p)||0)+1);
+    }
+  }
+  for (const it of items){
+    const ws = splitWords.get(it);
+    if (ws.length >= 2){
+      const p = (ws[0] + " " + ws[1]).toLowerCase();
+      if (freq.get(p) === 1) prefixFor.set(it, `${ws[0]} ${ws[1]}`);
+      else prefixFor.set(it, null);
+    } else prefixFor.set(it, null);
+  }
+  return prefixFor;
+}
+
+function pick4From(list, bannedSet){
+  const pool = list.filter(x=>!bannedSet.has(x));
+  shuffle(pool);
+  return pool.slice(0,4);
+}
+
+function shuffle(arr){
+  for (let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+/* ============================
+   Build Question Bank (300+)
+   No “Which of these…” prompts.
+   No ambiguous “multiple correct” distractors.
+   ============================ */
+function buildBank(){
+  const bank = [];
 
   // Character -> movie
   for (const cm of CHARACTERS){
-    out.push(Q(
+    const banned = new Set([cm.movie]);
+    bank.push(Q(
       `Which Christmas movie features the character "${cm.character}"?`,
       cm.movie,
-      pick4Distinct(MOVIES.filter(m=>m!==cm.movie).concat(NOT_XMAS_MOVIES)),
+      pick4From(MOVIES, banned),
       {category:"Movies"}
     ));
   }
 
-  // Movie -> character (use character list for distractors)
-  const allChars = CHARACTERS.map(x=>x.character);
-  for (const cm of CHARACTERS){
-    out.push(Q(
-      `Which character is from the movie "${cm.movie}"?`,
-      cm.character,
-      pick4Distinct(allChars.filter(c=>c!==cm.character)),
-      {category:"Movies"}
-    ));
-  }
-
-  // Reindeer facts
-  for (const r of REINDEER){
-    out.push(Q(
-      `Which of these is one of Santa's reindeer?`,
-      r,
-      pick4Distinct(["Sparkle","Thunder","Snowball","Fluffy","Rocket","Zippy","Biscuit","Buttons","Nibbles","Jingles"].filter(x=>x!==r)),
-      {category:"Santa & Reindeer"}
-    ));
-  }
-
-  // Song recognition
-  for (const s of SONGS){
-    out.push(Q(
-      `Which of these is a Christmas song?`,
-      s,
-      pick4Distinct(SONGS.filter(x=>x!==s).concat(NON_XMAS_SONGS)),
-      {category:"Songs"}
-    ));
-  }
-
-  // Movies: pick christmas vs non christmas
-  for (const m of MOVIES){
-    out.push(Q(
-      `Which of these is a Christmas movie?`,
-      m,
-      pick4Distinct(MOVIES.filter(x=>x!==m).concat(NOT_XMAS_MOVIES)),
-      {category:"Movies"}
-    ));
-  }
+  // Reindeer direct facts
+  bank.push(...REINDEER_CLUES);
 
   // Foods
-  for (const f of FOODS){
-    out.push(Q(
-      `Which of these is a common Christmas food or treat?`,
-      f,
-      pick4Distinct(["Sushi","Tacos","Popcorn shrimp","Spaghetti","Hamburger","Banana split","Nachos","Ramen","Pizza"].filter(x=>x!==f)),
-      {category:"Food & Treats"}
-    ));
-  }
+  bank.push(...FOOD_CLUES);
 
-  // Traditions around the world
+  // Christmas story
+  bank.push(...STORY);
+
+  // World traditions (direct prompts)
   for (const t of WORLD_TRADITIONS){
-    out.push(Q(
-      `In ${t.place}, which holiday tradition/food is commonly associated with Christmas?`,
+    const others = WORLD_TRADITIONS.map(x=>x.thing).filter(x=>x!==t.thing);
+    bank.push(Q(
+      `Which holiday tradition/food is commonly associated with ${t.place}?`,
       t.thing,
-      pick4Distinct(WORLD_TRADITIONS.map(x=>x.thing).filter(x=>x!==t.thing).concat(["Halloween candy hunt","Fourth of July fireworks","Easter egg race","Birthday pinata"])),
+      pick4From(others.concat(["Halloween candy hunt","Easter egg race","Fourth of July fireworks","Birthday piñata"]), new Set([t.thing])),
       {category:"World Traditions"}
     ));
   }
 
-  // Famous gifts
-  for (const g of GIFTS){
-    out.push(Q(
-      `Which of these is a famous holiday gift/toy people have wanted?`,
-      g,
-      pick4Distinct(GIFTS.filter(x=>x!==g).concat(["Sock Cannon 3000","Air Sandwich Maker","Glow Spoon","Teleporting Slippers","Mega Paperclip"])),
-      {category:"Famous Gifts"}
-    ));
+  // Toy/Gift clue questions (fixed)
+  bank.push(...TOY_CLUE_QUESTIONS);
+
+  // Songs: use UNIQUE token and/or UNIQUE 2-word prefix
+  const songToken = uniqueTokenMap(SONGS);
+  const songPrefix = uniquePrefixMap(SONGS);
+
+  for (const s of SONGS){
+    const token = songToken.get(s);
+    if (token){
+      const banned = new Set([s]);
+      const distractorPool = SONGS.filter(x=>x!==s && !words(x).includes(token));
+      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : SONGS.filter(x=>x!==s), banned);
+      bank.push(Q(
+        `Which Christmas song title includes the word "${token}"?`,
+        s,
+        distractors,
+        {category:"Songs"}
+      ));
+    }
+    const pref = songPrefix.get(s);
+    if (pref){
+      const banned = new Set([s]);
+      const distractorPool = SONGS.filter(x=>x!==s && !x.toLowerCase().startsWith(pref.toLowerCase()));
+      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : SONGS.filter(x=>x!==s), banned);
+      bank.push(Q(
+        `Which Christmas song title starts with "${pref}"?`,
+        s,
+        distractors,
+        {category:"Songs"}
+      ));
+    }
   }
 
-  // Add nativity/story questions
-  out.push(...NATIVITY);
+  // Movies: unique token/prefix questions (not “which of these is a christmas movie”)
+  const movieToken = uniqueTokenMap(MOVIES);
+  const moviePrefix = uniquePrefixMap(MOVIES);
 
-  // Extra kid-friendly general trivia (generated from simple templates)
-  const COLORS = ["Red","Green","Gold","Silver","White"];
-  for (const c of COLORS){
-    out.push(Q(
-      `Which color is commonly used in Christmas decorations?`,
-      c,
-      pick4Distinct(COLORS.filter(x=>x!==c).concat(["Orange","Pink","Brown","Neon purple"])),
-      {category:"Traditions"}
-    ));
+  for (const m of MOVIES){
+    const token = movieToken.get(m);
+    if (token){
+      const banned = new Set([m]);
+      const distractorPool = MOVIES.filter(x=>x!==m && !words(x).includes(token));
+      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : MOVIES.filter(x=>x!==m), banned);
+      bank.push(Q(
+        `Which Christmas movie title includes the word "${token}"?`,
+        m,
+        distractors,
+        {category:"Movies"}
+      ));
+    }
+    const pref = moviePrefix.get(m);
+    if (pref){
+      const banned = new Set([m]);
+      const distractorPool = MOVIES.filter(x=>x!==m && !x.toLowerCase().startsWith(pref.toLowerCase()));
+      const distractors = pick4From(distractorPool.length>=4 ? distractorPool : MOVIES.filter(x=>x!==m), banned);
+      bank.push(Q(
+        `Which Christmas movie title starts with "${pref}"?`,
+        m,
+        distractors,
+        {category:"Movies"}
+      ));
+    }
   }
 
-  // Add more audio placeholders (you can replace files later)
-  const audioPlaceholders = [
-    {song:"Jingle Bell Rock", file:"audio/jingle_bell_rock.mp3"},
-    {song:"We Wish You a Merry Christmas", file:"audio/we_wish_you.mp3"},
-    {song:"All I Want for Christmas Is You", file:"audio/all_i_want.mp3"}
+  // Media placeholders
+  bank.push(...MEDIA_QUESTIONS);
+
+  // Add more general clue-style questions to pad variety (still unambiguous)
+  const GENERAL = [
+    Q("What do you hang by the fireplace for gifts?", "Stocking", ["Backpack","Boot","Pillowcase","Hat"], {category:"Traditions"}),
+    Q("What plant do people kiss under at Christmas?", "Mistletoe", ["Cactus","Oak tree","Sunflower","Bamboo"], {category:"Traditions"}),
+    Q("What do people often put on top of a Christmas tree?", "Star", ["Spoon","Book","Sock","Ball"], {category:"Traditions"}),
+    Q("What is Santa's usual color in cartoons?", "Red", ["Blue","Green","Purple","Black"], {category:"Santa & Reindeer"}),
+    Q("What is the name of the mean green character who hates Christmas?", "The Grinch",
+      ["Frosty","Buddy","Scrooge (generic)","The Sandman"], {category:"Movies"})
   ];
-  for (const a of audioPlaceholders){
-    out.push(Q(
-      `AUDIO: Identify this Christmas song (short clip).`,
-      a.song,
-      pick4Distinct(SONGS.filter(x=>x!==a.song)),
-      {category:"Audio", type:"audio", mediaSrc:a.file}
+  bank.push(...GENERAL);
+
+  // Ensure we’re well over 300: create safe variations using the same CLUE logic (no ambiguity).
+  // Variation: for each song with a unique token, create an additional “contains token” question with a different phrasing.
+  for (const s of SONGS){
+    const token = songToken.get(s);
+    if (!token) continue;
+    const banned = new Set([s]);
+    const pool = SONGS.filter(x=>x!==s && !words(x).includes(token));
+    const distractors = pick4From(pool.length>=4 ? pool : SONGS.filter(x=>x!==s), banned);
+    bank.push(Q(
+      `Name the Christmas song whose title contains "${token}".`,
+      s,
+      distractors,
+      {category:"Songs"}
     ));
   }
 
-  // Add more image placeholders
-  const imgPlaceholders = [
-    {prompt:"IMAGE: Which character is shown here?", answer:"The Grinch", file:"images/grinch.jpg",
-      distractors:["Buddy","Frosty","Scrooge","Santa"]},
-    {prompt:"IMAGE: Which movie is this poster/scene from?", answer:"Elf", file:"images/elf.jpg",
-      distractors:["Home Alone","The Santa Clause","A Christmas Story","Klaus"]},
-    {prompt:"IMAGE: What is this decoration called?", answer:"Wreath", file:"images/wreath.jpg",
-      distractors:["Crown","Bracelet","Necklace","Ribbon"]}
-  ];
-  for (const im of imgPlaceholders){
-    out.push(Q(im.prompt, im.answer, im.distractors, {category:"Images", type:"image", mediaSrc:im.file}));
+  // Same for movies unique token variants
+  for (const m of MOVIES){
+    const token = movieToken.get(m);
+    if (!token) continue;
+    const banned = new Set([m]);
+    const pool = MOVIES.filter(x=>x!==m && !words(x).includes(token));
+    const distractors = pick4From(pool.length>=4 ? pool : MOVIES.filter(x=>x!==m), banned);
+    bank.push(Q(
+      `Name the Christmas movie whose title contains "${token}".`,
+      m,
+      distractors,
+      {category:"Movies"}
+    ));
   }
 
-  return out;
+  // Deduplicate by prompt+answer just in case
+  const seen = new Set();
+  const deduped = [];
+  for (const q of bank){
+    const key = (q.prompt+"||"+q.answer).toLowerCase();
+    if (!seen.has(key)){
+      seen.add(key);
+      deduped.push(q);
+    }
+  }
+  return deduped;
 }
 
-/** Utility: pick 4 distinct items from a list (best effort) */
-function pick4Distinct(list){
-  const arr = [...new Set(list)];
-  shuffle(arr);
-  return arr.slice(0,4);
-}
-
-/** Combine bank and ensure we have 300+ */
-let QUESTION_BANK = [...BASE_QUESTIONS, ...buildGeneratedQuestions()];
-
-/* If somehow short (it shouldn't be), pad with harmless extra variations */
-while (QUESTION_BANK.length < 310){
-  QUESTION_BANK.push(Q(
-    `Which of these is something you might see at Christmas?`,
-    "Christmas tree",
-    ["Volcano","Sandcastle","Soccer goal","Dinosaur"],
-    {category:"General"}
-  ));
-}
-
+let QUESTION_BANK = buildBank();
 console.log("Question bank size:", QUESTION_BANK.length);
 
 /* ============================
@@ -882,7 +791,7 @@ const btnClearBuzz = $("#btnClearBuzz");
 const scoreHint = $("#scoreHint");
 
 const btnRestart = $("#btnRestart");
-
+const btnPlayAgain = $("#btnPlayAgain");
 const endTitle = $("#endTitle");
 const soloEndBlock = $("#soloEndBlock");
 const groupEndBlock = $("#groupEndBlock");
@@ -890,7 +799,6 @@ const endScore = $("#endScore");
 const nameInput = $("#nameInput");
 const btnSubmit = $("#btnSubmit");
 const submitStatus = $("#submitStatus");
-const btnPlayAgain = $("#btnPlayAgain");
 const winnerText = $("#winnerText");
 const finalScores = $("#finalScores");
 
@@ -901,7 +809,6 @@ $("#btnGroup4").addEventListener("click", ()=>startGame("group", 4));
 btnPlayAgain.addEventListener("click", ()=>goToStart());
 btnRestart.addEventListener("click", ()=>goToStart());
 
-/* State */
 let mode = "solo";
 let teamCount = 0;
 let teamScores = [];
@@ -917,7 +824,6 @@ let buzzedTeam = null;
 let buzzWasBeforeReveal = false;
 
 let answeredLocked = false;
-let tieBreakerStartIndex = 0;
 
 function goToStart(){
   stopAnyAudio();
@@ -928,58 +834,49 @@ function goToStart(){
 }
 
 function resetState(){
-  mode = "solo";
-  teamCount = 0;
-  teamScores = [];
-  teamNames = [];
-  soloScore = 0;
-  gameQuestions = [];
-  qIndex = 0;
-  isTieBreaker = false;
-  choicesRevealed = false;
-  buzzedTeam = null;
-  buzzWasBeforeReveal = false;
-  answeredLocked = false;
-  tieBreakerStartIndex = 0;
+  mode="solo"; teamCount=0;
+  teamScores=[]; teamNames=[];
+  soloScore=0;
+  gameQuestions=[]; qIndex=0; isTieBreaker=false;
+  choicesRevealed=false; buzzedTeam=null; buzzWasBeforeReveal=false;
+  answeredLocked=false;
 
-  feedbackEl.className = "feedback";
-  feedbackEl.textContent = "";
-  feedbackEl.style.display = "none";
-  scoreHint.style.display = "none";
-  scoreHint.textContent = "";
-  submitStatus.style.display = "none";
-  nameInput.value = "";
+  feedbackEl.className="feedback";
+  feedbackEl.textContent="";
+  feedbackEl.style.display="none";
+  scoreHint.style.display="none";
+  scoreHint.textContent="";
+  submitStatus.style.display="none";
+  nameInput.value="";
 }
 
 function startGame(newMode, teams){
   resetState();
-  mode = newMode;
-  teamCount = teams;
+  mode=newMode;
+  teamCount=teams;
 
-  // Pick 30 random questions for main game
+  // Build per-mode pool:
+  // Group mode: still uses all questions because prompts are now all answerable without choices.
   const pool = [...QUESTION_BANK];
+
   shuffle(pool);
-  const main = pool.slice(0, 30);
-
-  // Add extra for tie-breakers (20 extra)
-  const extra = pool.slice(30, 50);
+  const main = pool.slice(0,30);
+  const extra = pool.slice(30,60); // tie-break buffer
   gameQuestions = main.concat(extra);
-  tieBreakerStartIndex = 30;
 
-  qIndex = 0;
+  qIndex=0;
 
-  // Setup UI
-  screenStart.style.display = "none";
-  screenEnd.style.display = "none";
-  screenQuiz.style.display = "block";
+  screenStart.style.display="none";
+  screenEnd.style.display="none";
+  screenQuiz.style.display="block";
 
-  pillMode.textContent = `Mode: ${mode === "solo" ? "Solo" : `Group (${teamCount} Teams)`}`;
-  pillScore.style.display = (mode === "solo") ? "inline-flex" : "none";
+  pillMode.textContent = `Mode: ${mode==="solo" ? "Solo" : `Group (${teamCount} Teams)`}`;
+  pillScore.style.display = (mode==="solo") ? "inline-flex" : "none";
 
-  groupControls.style.display = (mode === "group") ? "grid" : "none";
-  scoreboardWrap.style.display = (mode === "group") ? "block" : "none";
+  groupControls.style.display = (mode==="group") ? "grid" : "none";
+  scoreboardWrap.style.display = (mode==="group") ? "block" : "none";
 
-  if (mode === "group"){
+  if (mode==="group"){
     teamScores = Array(teamCount).fill(0);
     teamNames = Array.from({length:teamCount}, (_,i)=>`Team ${i+1}`);
     renderScoreboard();
@@ -990,55 +887,49 @@ function startGame(newMode, teams){
 }
 
 function renderScoreboard(){
-  scoreboard.innerHTML = "";
-  for (let i=0; i<teamCount; i++){
-    const card = document.createElement("div");
-    card.className = "teamCard";
-    card.dataset.teamIndex = String(i);
+  scoreboard.innerHTML="";
+  for (let i=0;i<teamCount;i++){
+    const card=document.createElement("div");
+    card.className="teamCard";
 
-    const name = document.createElement("div");
-    name.className = "teamName";
-    name.textContent = teamNames[i];
+    const name=document.createElement("div");
+    name.className="teamName";
+    name.textContent=teamNames[i];
     name.setAttribute("contenteditable","false");
-    name.addEventListener("click", ()=>{
-      name.setAttribute("contenteditable","true");
-      name.focus();
-    });
+    name.addEventListener("click", ()=>{name.setAttribute("contenteditable","true"); name.focus();});
     name.addEventListener("blur", ()=>{
       name.setAttribute("contenteditable","false");
-      const txt = name.textContent.trim() || `Team ${i+1}`;
-      teamNames[i] = txt;
-      name.textContent = txt;
-      // refresh buzz labels
+      const txt = (name.textContent||"").trim() || `Team ${i+1}`;
+      teamNames[i]=txt;
+      name.textContent=txt;
       buildBuzzButtons();
     });
 
-    const score = document.createElement("div");
-    score.className = "teamScore";
-    score.id = `teamScore_${i}`;
-    score.textContent = String(teamScores[i]);
+    const score=document.createElement("div");
+    score.className="teamScore";
+    score.id=`teamScore_${i}`;
+    score.textContent=String(teamScores[i]);
 
-    const btns = document.createElement("div");
-    btns.className = "scoreBtns";
+    const btns=document.createElement("div");
+    btns.className="scoreBtns";
 
-    const mk = (label, delta, cls="btn small")=>{
-      const b = document.createElement("button");
-      b.className = cls;
-      b.textContent = label;
-      b.addEventListener("click", ()=>adjustTeamScore(i, delta));
+    const mk=(label,delta,cls)=> {
+      const b=document.createElement("button");
+      b.className=cls || "btn small";
+      b.textContent=label;
+      b.addEventListener("click", ()=>adjustTeamScore(i,delta));
       return b;
     };
 
-    // Quick scoring helpers (because operators are human and will make mistakes)
     btns.appendChild(mk("+4", +4, "btn small gold"));
     btns.appendChild(mk("+2", +2, "btn small green"));
     btns.appendChild(mk("+1", +1, "btn small"));
     btns.appendChild(mk("-1", -1, "btn small red"));
     btns.appendChild(mk("-2", -2, "btn small red"));
 
-    const mini = document.createElement("div");
-    mini.className = "mini";
-    mini.textContent = "Edit name • Adjust score";
+    const mini=document.createElement("div");
+    mini.className="mini";
+    mini.textContent="Edit name • Adjust score";
 
     card.appendChild(name);
     card.appendChild(score);
@@ -1048,35 +939,34 @@ function renderScoreboard(){
   }
 }
 
-function adjustTeamScore(teamIdx, delta){
-  teamScores[teamIdx] += delta; // allow negative
-  const el = document.getElementById(`teamScore_${teamIdx}`);
-  if (el) el.textContent = String(teamScores[teamIdx]);
+function adjustTeamScore(teamIdx,delta){
+  teamScores[teamIdx]+=delta; // allow negative
+  const el=document.getElementById(`teamScore_${teamIdx}`);
+  if (el) el.textContent=String(teamScores[teamIdx]);
 }
 
 function buildBuzzButtons(){
-  buzzButtons.innerHTML = "";
-  for (let i=0; i<teamCount; i++){
-    const b = document.createElement("button");
-    b.className = "btn small";
-    b.textContent = `Buzz: ${teamNames[i]}`;
+  buzzButtons.innerHTML="";
+  for (let i=0;i<teamCount;i++){
+    const b=document.createElement("button");
+    b.className="btn small";
+    b.textContent=`Buzz: ${teamNames[i]}`;
     b.addEventListener("click", ()=>{
       if (answeredLocked) return;
-      buzzedTeam = i;
-      buzzWasBeforeReveal = !choicesRevealed;
-      buzzStatus.style.display = "inline-flex";
+      buzzedTeam=i;
+      buzzWasBeforeReveal=!choicesRevealed;
+      buzzStatus.style.display="inline-flex";
       buzzStatus.textContent = `${teamNames[i]} buzzed ${buzzWasBeforeReveal ? "(early = double eligible)" : ""}`;
-      btnClearBuzz.style.display = "inline-flex";
-      scoreHint.style.display = "none";
+      btnClearBuzz.style.display="inline-flex";
+      scoreHint.style.display="none";
     });
     buzzButtons.appendChild(b);
   }
-  btnClearBuzz.style.display = (buzzedTeam !== null) ? "inline-flex" : "none";
-  btnClearBuzz.onclick = ()=>{
-    buzzedTeam = null;
-    buzzWasBeforeReveal = false;
-    buzzStatus.style.display = "none";
-    btnClearBuzz.style.display = "none";
+  btnClearBuzz.style.display = (buzzedTeam!==null) ? "inline-flex" : "none";
+  btnClearBuzz.onclick=()=>{
+    buzzedTeam=null; buzzWasBeforeReveal=false;
+    buzzStatus.style.display="none";
+    btnClearBuzz.style.display="none";
   };
 }
 
@@ -1084,59 +974,54 @@ btnReveal.addEventListener("click", ()=>{
   if (answeredLocked) return;
   choicesRevealed = !choicesRevealed;
   if (choicesRevealed){
-    btnReveal.textContent = "Hide Choices";
-    choicesEl.style.display = "grid";
+    btnReveal.textContent="Hide Choices";
+    choicesEl.style.display="grid";
   } else {
-    btnReveal.textContent = "Reveal Choices";
-    choicesEl.style.display = "none";
+    btnReveal.textContent="Reveal Choices";
+    choicesEl.style.display="none";
   }
 });
 
 btnPass.addEventListener("click", ()=>{
   if (answeredLocked) return;
-  showFeedback("Pass. Nobody knows, which is honestly fair.", "bad");
-  btnNext.disabled = false;
+  showFeedback("Pass. Nobody answered. Moving on.", "bad");
+  btnNext.disabled=false;
 });
 
-btnNext.addEventListener("click", ()=>{
-  nextQuestion();
-});
+btnNext.addEventListener("click", ()=>nextQuestion());
 
-/* Render one question */
 function renderQuestion(){
-  answeredLocked = false;
-  btnNext.disabled = true;
-  scoreHint.style.display = "none";
-  scoreHint.textContent = "";
+  answeredLocked=false;
+  btnNext.disabled=true;
+  scoreHint.style.display="none";
+  scoreHint.textContent="";
 
-  feedbackEl.className = "feedback";
-  feedbackEl.textContent = "";
-  feedbackEl.style.display = "none";
+  feedbackEl.className="feedback";
+  feedbackEl.textContent="";
+  feedbackEl.style.display="none";
 
   stopAnyAudio();
 
-  const totalMain = 30;
-  const displayNumber = Math.min(qIndex+1, totalMain) + (isTieBreaker ? " (Tie-breaker)" : "");
-  pillProgress.textContent = `Q ${displayNumber} / ${totalMain}`;
+  const mainTotal=30;
+  pillProgress.textContent = `Q ${Math.min(qIndex+1,mainTotal)} / ${mainTotal}` + (isTieBreaker ? " (Tie-breaker)" : "");
   pillScore.textContent = `Score: ${soloScore}`;
 
-  const q = gameQuestions[qIndex];
-
+  const q=gameQuestions[qIndex];
   pillCategory.textContent = `Category: ${q.category}`;
   questionText.textContent = q.prompt;
 
   // media
-  mediaEl.innerHTML = "";
-  if (q.type === "image" && q.mediaSrc){
-    const img = document.createElement("img");
-    img.src = q.mediaSrc;
-    img.alt = "Question image";
+  mediaEl.innerHTML="";
+  if (q.type==="image" && q.mediaSrc){
+    const img=document.createElement("img");
+    img.src=q.mediaSrc;
+    img.alt="Question image";
     mediaEl.appendChild(img);
-  } else if (q.type === "audio" && q.mediaSrc){
-    const a = document.createElement("audio");
-    a.controls = true;
-    a.preload = "none";
-    a.src = q.mediaSrc;
+  } else if (q.type==="audio" && q.mediaSrc){
+    const a=document.createElement("audio");
+    a.controls=true;
+    a.preload="none";
+    a.src=q.mediaSrc;
     mediaEl.appendChild(a);
   }
 
@@ -1144,51 +1029,48 @@ function renderQuestion(){
   const options = buildFiveChoices(q);
   renderChoices(options, q.answer);
 
-  // mode-specific behavior
-  if (mode === "solo"){
-    choicesEl.style.display = "grid";
+  if (mode==="solo"){
+    choicesEl.style.display="grid";
   } else {
-    // group starts hidden
-    choicesRevealed = false;
-    btnReveal.textContent = "Reveal Choices";
-    choicesEl.style.display = "none";
-    // clear buzz per question
-    buzzedTeam = null;
-    buzzWasBeforeReveal = false;
-    buzzStatus.style.display = "none";
-    btnClearBuzz.style.display = "none";
+    choicesRevealed=false;
+    btnReveal.textContent="Reveal Choices";
+    choicesEl.style.display="none";
+
+    buzzedTeam=null;
+    buzzWasBeforeReveal=false;
+    buzzStatus.style.display="none";
+    btnClearBuzz.style.display="none";
   }
 }
 
 function buildFiveChoices(q){
-  // Ensure 5 options: answer + 4 distractors
-  const set = new Set([q.answer]);
-  const d = [...q.distractors];
+  const set=new Set([q.answer]);
+  const d=[...q.distractors];
   shuffle(d);
   for (const x of d){
-    if (set.size >= 5) break;
+    if (set.size>=5) break;
     set.add(x);
   }
-  // If distractors list was short, pull from global answers
-  if (set.size < 5){
-    const global = QUESTION_BANK.map(qq=>qq.answer).filter(a=>a && a !== q.answer);
+  // if still short, draw other answers that are not the same
+  if (set.size<5){
+    const global = QUESTION_BANK.map(qq=>qq.answer).filter(a=>a && a!==q.answer);
     shuffle(global);
     for (const g of global){
-      if (set.size >= 5) break;
+      if (set.size>=5) break;
       set.add(g);
     }
   }
-  const arr = Array.from(set);
+  const arr=Array.from(set);
   shuffle(arr);
   return arr.slice(0,5);
 }
 
 function renderChoices(options, correct){
-  choicesEl.innerHTML = "";
+  choicesEl.innerHTML="";
   for (const opt of options){
-    const div = document.createElement("div");
-    div.className = "choice";
-    div.textContent = opt;
+    const div=document.createElement("div");
+    div.className="choice";
+    div.textContent=opt;
     div.addEventListener("click", ()=>onChoose(opt, correct, div));
     choicesEl.appendChild(div);
   }
@@ -1197,195 +1079,151 @@ function renderChoices(options, correct){
 function onChoose(selected, correct, el){
   if (answeredLocked) return;
 
-  // In group mode, choices must be revealed before selection (per your rule)
-  if (mode === "group" && !choicesRevealed){
-    showFeedback("Reveal choices first (so you can verify what was said).", "bad");
+  if (mode==="group" && !choicesRevealed){
+    showFeedback("Reveal choices first (so you can verify the spoken answer).", "bad");
     return;
   }
 
-  answeredLocked = true;
-
-  // disable all
+  answeredLocked=true;
   [...choicesEl.children].forEach(c=>{
     c.classList.add("disabled");
-    c.style.pointerEvents = "none";
+    c.style.pointerEvents="none";
   });
 
-  const isCorrect = (selected === correct);
+  const isCorrect = (selected===correct);
 
-  // mark correct + wrong
   [...choicesEl.children].forEach(c=>{
-    if (c.textContent === correct) c.classList.add("correct");
+    if (c.textContent===correct) c.classList.add("correct");
   });
   if (!isCorrect) el.classList.add("wrong");
 
-  if (mode === "solo"){
-    if (isCorrect) soloScore += 2;
-    else soloScore -= 1;
+  if (mode==="solo"){
+    soloScore += isCorrect ? 2 : -1;
+    pillScore.textContent=`Score: ${soloScore}`;
 
-    pillScore.textContent = `Score: ${soloScore}`;
     showFeedback(
-      isCorrect ? `✅ Correct! +2` : `❌ Incorrect. Correct answer: "${correct}" (-1)`,
+      isCorrect ? "✅ Correct! +2" : `❌ Incorrect. Correct answer: "${correct}" (-1)`,
       isCorrect ? "good" : "bad"
     );
 
-    // auto advance after ~3.2s
     setTimeout(()=>nextQuestion(), 3200);
   } else {
-    // Group: host controls scoring; we provide a hint
-    const base = isCorrect ? 2 : -1;
-    const suggested = (isCorrect && buzzedTeam !== null && buzzWasBeforeReveal) ? 4 : base;
-    const buzzTxt = (buzzedTeam !== null) ? `Buzzed team: ${teamNames[buzzedTeam]}.` : `No team buzzed.`;
-    const suggestionTxt = isCorrect
-      ? `Suggested points: ${suggested >= 0 ? "+" : ""}${suggested}${(suggested===4 ? " (double)" : "")}.`
-      : `Suggested points: -1 (wrong).`;
+    // Group: host decides; we provide a hint based on early buzz
+    const suggested = isCorrect
+      ? ((buzzedTeam!==null && buzzWasBeforeReveal) ? 4 : 2)
+      : -1;
+
+    const buzzTxt = (buzzedTeam!==null) ? `Buzzed team: ${teamNames[buzzedTeam]}.` : "No team buzzed.";
+    const sugTxt = `Suggested score: ${suggested>=0?"+":""}${suggested}${(suggested===4?" (double)":"")}.`;
 
     showFeedback(
-      (isCorrect ? `✅ Correct.` : `❌ Incorrect. Correct answer: "${correct}".`) + ` ${buzzTxt} ${suggestionTxt} Then click Next.`,
+      (isCorrect ? "✅ Correct." : `❌ Incorrect. Correct answer: "${correct}".`) + " " + buzzTxt + " " + sugTxt + " Click Next.",
       isCorrect ? "good" : "bad"
     );
 
-    scoreHint.style.display = "block";
-    scoreHint.textContent = `Host hint: ${suggestionTxt}`;
-
-    btnNext.disabled = false;
+    scoreHint.style.display="block";
+    scoreHint.textContent=sugTxt;
+    btnNext.disabled=false;
   }
 }
 
-function showFeedback(text, kind){
-  feedbackEl.textContent = text;
-  feedbackEl.className = "feedback show " + (kind === "good" ? "good" : "bad");
-  feedbackEl.style.display = "block";
+function showFeedback(text,kind){
+  feedbackEl.textContent=text;
+  feedbackEl.className="feedback show " + (kind==="good" ? "good" : "bad");
+  feedbackEl.style.display="block";
 }
 
 function nextQuestion(){
-  // advance
   qIndex++;
 
-  // Determine if end-of-main-game reached
-  if (!isTieBreaker && qIndex >= 30){
-    if (mode === "solo"){
-      return endSolo();
-    } else {
-      // Group: check tie
-      const {max, winners} = getGroupLeaders();
-      if (winners.length === 1){
-        return endGroup();
-      } else {
-        isTieBreaker = true;
-        showFeedback(`Tie at ${max} points between: ${winners.map(i=>teamNames[i]).join(", ")}. Sudden death begins.`, "bad");
-        // continue with extra questions (qIndex already points to first tie-break question)
-      }
-    }
+  if (!isTieBreaker && qIndex>=30){
+    if (mode==="solo") return endSolo();
+    const {max,winners}=getLeaders();
+    if (winners.length===1) return endGroup();
+    isTieBreaker=true;
+    showFeedback(`Tie at ${max} points between: ${winners.map(i=>teamNames[i]).join(", ")}. Sudden death begins.`, "bad");
   }
 
-  // In tie-breaker, after each question check if we have unique leader
-  if (isTieBreaker && mode === "group"){
-    const {winners} = getGroupLeaders();
-    if (winners.length === 1){
-      return endGroup();
-    }
+  if (isTieBreaker && mode==="group"){
+    const {winners}=getLeaders();
+    if (winners.length===1) return endGroup();
   }
 
-  // if out of questions, reshuffle (should never happen with our extras, but just in case)
-  if (qIndex >= gameQuestions.length){
-    const pool = [...QUESTION_BANK];
+  if (qIndex>=gameQuestions.length){
+    const pool=[...QUESTION_BANK];
     shuffle(pool);
-    gameQuestions = gameQuestions.concat(pool.slice(0, 20));
+    gameQuestions = gameQuestions.concat(pool.slice(0,30));
   }
-
   renderQuestion();
 }
 
-function getGroupLeaders(){
-  const max = Math.max(...teamScores);
-  const winners = [];
-  teamScores.forEach((s,i)=>{ if (s === max) winners.push(i); });
-  return {max, winners};
+function getLeaders(){
+  const max=Math.max(...teamScores);
+  const winners=[];
+  teamScores.forEach((s,i)=>{if (s===max) winners.push(i);});
+  return {max,winners};
 }
 
 function endSolo(){
   stopAnyAudio();
-  screenQuiz.style.display = "none";
-  screenEnd.style.display = "block";
+  screenQuiz.style.display="none";
+  screenEnd.style.display="block";
 
-  endTitle.textContent = "Solo Game Complete!";
-  soloEndBlock.style.display = "block";
-  groupEndBlock.style.display = "none";
-  endScore.textContent = `Score: ${soloScore}`;
-
-  submitStatus.style.display = "none";
+  endTitle.textContent="Solo Game Complete!";
+  soloEndBlock.style.display="block";
+  groupEndBlock.style.display="none";
+  endScore.textContent=`Score: ${soloScore}`;
+  submitStatus.style.display="none";
 }
 
 function endGroup(){
   stopAnyAudio();
-  screenQuiz.style.display = "none";
-  screenEnd.style.display = "block";
+  screenQuiz.style.display="none";
+  screenEnd.style.display="block";
 
-  endTitle.textContent = "Group Game Complete!";
-  soloEndBlock.style.display = "none";
-  groupEndBlock.style.display = "block";
+  endTitle.textContent="Group Game Complete!";
+  soloEndBlock.style.display="none";
+  groupEndBlock.style.display="block";
 
-  const {max, winners} = getGroupLeaders();
-  if (winners.length === 1){
-    winnerText.textContent = `🏆 ${teamNames[winners[0]]} won with ${max} points!`;
-  } else {
-    winnerText.textContent = `🤝 Tie at ${max} points: ${winners.map(i=>teamNames[i]).join(", ")}`;
-  }
+  const {max,winners}=getLeaders();
+  winnerText.textContent = winners.length===1
+    ? `🏆 ${teamNames[winners[0]]} won with ${max} points!`
+    : `🤝 Tie at ${max}: ${winners.map(i=>teamNames[i]).join(", ")}`;
 
-  finalScores.innerHTML = `<h3 style="margin:.2rem 0 .6rem">Final Scores</h3>` +
+  finalScores.innerHTML =
+    `<h3 style="margin:.2rem 0 .6rem">Final Scores</h3>` +
     `<div class="pillbar" style="justify-content:flex-start">` +
     teamScores.map((s,i)=>`<span class="pill"><b>${escapeHtml(teamNames[i])}</b>: ${s}</span>`).join("") +
     `</div>`;
 }
 
-/* Score submit (solo) */
 btnSubmit.addEventListener("click", async ()=>{
-  const name = (nameInput.value || "").trim();
+  const name=(nameInput.value||"").trim();
   if (!name){
-    submitStatus.style.display = "inline-flex";
-    submitStatus.textContent = "Please enter your name.";
+    submitStatus.style.display="inline-flex";
+    submitStatus.textContent="Please enter your name.";
     return;
   }
-
-  // Your sheet wants: Name | Time | Score
-  const timeISO = new Date().toISOString();
-  submitStatus.style.display = "inline-flex";
-  submitStatus.textContent = "Submitting score...";
+  const timeISO=new Date().toISOString();
+  submitStatus.style.display="inline-flex";
+  submitStatus.textContent="Submitting score...";
 
   const url = `${SCRIPT_URL}?Name=${encodeURIComponent(name)}&Time=${encodeURIComponent(timeISO)}&Score=${encodeURIComponent(String(soloScore))}`;
-
   try{
-    // no-cors because Apps Script responses often lack CORS headers
     await fetch(url, {mode:"no-cors"});
-    submitStatus.textContent = "Submitted! 🎉 (If it doesn't show instantly, refresh the sheet.)";
+    submitStatus.textContent="Submitted! 🎉 (If it doesn’t show instantly, refresh the sheet.)";
   }catch(e){
-    submitStatus.textContent = "Submission failed. Check internet or Apps Script deployment settings.";
+    submitStatus.textContent="Submission failed. Check your Apps Script deployment settings.";
   }
 });
 
-/* Utils */
-function shuffle(arr){
-  for (let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
 function stopAnyAudio(){
-  // Stop any playing audio elements when moving questions/screens
-  const audios = document.querySelectorAll("audio");
-  audios.forEach(a=>{
-    try{ a.pause(); a.currentTime = 0; }catch(_){}
-  });
+  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(_){} });
 }
-
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
 }
 
-/* Start at menu */
 goToStart();
 </script>
 </body>
