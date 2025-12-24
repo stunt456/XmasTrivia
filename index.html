@@ -151,32 +151,6 @@
   </div>
 </div>
 
-<!-- Google Sheets Integration Instructions -->
-<div id="instructions">
-  <h2>Google Sheets Integration Setup</h2>
-  <p>This game can send final scores to a Google Sheets log. To set this up, follow these steps:</p>
-  <ol>
-    <li>Create a new Google Sheet (or open your existing sheet where you want to log scores).</li>
-    <li>Click on <strong>Extensions > Apps Script</strong> in the Google Sheet to open the Apps Script editor.</li>
-    <li>Copy the Google Apps Script code provided (or given by the developer) into the script editor. This script should capture HTTP GET requests and append the score data to your sheet. For example, a simple script might look like:<br>
-      <pre style="background:#f8f8f8; padding:10px; border:1px solid #ccc;">
-function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  // Append a new row with timestamp, mode, team/name, and score
-  sheet.appendRow([new Date(), e.parameter.mode || "", e.parameter.team || e.parameter.name || "", e.parameter.score || ""]);
-  return ContentService.createTextOutput("Success");
-}
-      </pre>
-      Ensure the parameter names (like <code>mode</code>, <code>team</code>, <code>name</code>, <code>score</code>) match what the game sends.</li>
-    <li>Save the script, then click <strong>Deploy > New deployment</strong>. Choose <strong>Web App</strong> as the deployment type.</li>
-    <li>In the deployment settings, set <strong>Execute as</strong> to <em>Me (your account)</em>, and set <strong>Who has access</strong> to <em>Anyone</em> (meaning even anonymous can access). This is required so the game can send data without needing authentication.</li>
-    <li>Deploy the web app and copy the Web App URL that is generated. It will look similar to the provided URL (starting with <code>https://script.google.com/macros/s/...</code>).</li>
-    <li>In the game code, find the line with <code>scriptURL</code> and replace the placeholder or provided URL with your own Web App URL. (The code already includes the example URL provided.)</li>
-    <li>Open your GitHub Pages game and play a full game to test the integration. After the game ends, check your Google Sheet – you should see a new row added with the game mode, team or player, and score information.</li>
-  </ol>
-  <p>If the score submission isn't appearing, make sure that your Apps Script Project is deployed as a web app and accessible to "Anyone, even anonymous," and that you've updated the <code>scriptURL</code> in the code. You can also open the URL directly in a browser with appropriate parameters (e.g. <code>?mode=solo&score=10</code>) to see if it logs a row in the sheet for testing.</p>
-</div>
-
 <script>
   // Question pool: an array of question objects with question, correct answer, and distractors
   var questions = [
@@ -494,7 +468,7 @@ function doGet(e) {
       wrong: ["1830", "1860", "1880", "1910"] }
   ];
 
-  var scriptURL = "https://script.google.com/macros/s/AKfycby7ZsgfPb-dw1oxroQT5e3WyhDFspOP3yalxywQReOviGqGpx_slZ07LmnnRgnUJ-ikxw/exec";
+  var scriptURL = "https://script.google.com/macros/s/AKfycbxW8WjJJ37mjvgwisDeaqo1hPfOzzZLhPbgOugAZFT0E0U0TTpd07QefMDT7lX16mkduA/exec";
 
   // Game state variables
   var gameMode = "solo";
@@ -818,3 +792,4 @@ function doGet(e) {
 
 </body>
 </html>
+
