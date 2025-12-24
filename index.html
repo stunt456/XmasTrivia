@@ -1,1257 +1,820 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🎄 Christmas Trivia Party Game</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <title>Christmas Trivia Game</title>
   <style>
-    :root{
-      --bg1:#04162a; --bg2:#0b2d2d;
-      --card:rgba(0,0,0,.35);
-      --text:#f5fbff;
-      --muted:rgba(255,255,255,.78);
-      --good:#2ecc71; --bad:#ff4d4d;
-      --ring:0 0 0 3px rgba(117,214,255,.35);
-      --shadow:0 12px 32px rgba(0,0,0,.35);
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #333;
+      margin: 0;
+      padding: 20px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:
-        radial-gradient(1200px 600px at 20% -10%, rgba(117,214,255,.22), transparent 60%),
-        radial-gradient(900px 600px at 90% 10%, rgba(255,204,51,.12), transparent 60%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
-      overflow-x:hidden;
+    h1, h2, h3 {
+      text-align: center;
     }
-    .topbar{
-      position:sticky; top:0; z-index:20;
-      background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
-      backdrop-filter: blur(8px);
-      border-bottom:1px solid rgba(255,255,255,.12);
-      padding:.8rem 1rem;
+    #game-container {
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .brand{
-      display:flex; align-items:center; justify-content:center; gap:.6rem;
-      font-family:"Mountains of Christmas", system-ui, sans-serif;
-      font-weight:700;
-      letter-spacing:.5px;
-      font-size:clamp(1.1rem, 2.4vw, 1.8rem);
-      text-shadow:0 6px 20px rgba(0,0,0,.35);
+    #start-screen, #question-screen, #group-scoreboard, #result-screen {
+      margin: 20px 0;
+      text-align: center;
     }
-    .wrap{max-width:980px;margin:0 auto;padding:1.2rem}
-    .card{
-      background:var(--card);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-      padding:1.1rem;
-      margin:1rem 0;
+    #start-screen select, #start-screen input[type="radio"] {
+      margin: 5px;
     }
-    .soft{
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18));
+    .question-count {
+      font-size: 1.1em;
+      margin-bottom: 10px;
     }
-    h1,h2,h3{
-      font-family:"Mountains of Christmas", system-ui, sans-serif;
-      margin:.2rem 0 .7rem;
-      text-shadow:0 8px 22px rgba(0,0,0,.35);
+    #question-text {
+      font-size: 1.3em;
+      margin: 20px 0;
     }
-    h1{font-size:clamp(2rem, 4.2vw, 3rem)}
-    h2{font-size:clamp(1.5rem, 3.2vw, 2.1rem)}
-    h3{font-size:clamp(1.2rem, 2.6vw, 1.6rem)}
-    p{color:var(--muted); line-height:1.45}
-
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem}
-    .col-6{grid-column:span 6}
-    .col-12{grid-column:span 12}
-    @media(max-width:860px){.col-6{grid-column:span 12}}
-
-    .btn{
-      appearance:none;border:0;border-radius:12px;
-      padding:.75rem 1rem;color:white;
-      background:linear-gradient(180deg, rgba(27,110,243,1), rgba(16,72,171,1));
-      box-shadow:0 10px 24px rgba(0,0,0,.25);
-      cursor:pointer;font-weight:800;letter-spacing:.2px;
-      transition:transform .08s ease, filter .12s ease;
-      user-select:none;width:100%;
+    .options-list {
+      list-style: none;
+      padding: 0;
     }
-    .btn:hover{filter:brightness(1.05)}
-    .btn:active{transform:translateY(1px)}
-    .btn:focus{outline:none; box-shadow:var(--shadow), var(--ring)}
-    .btn.alt{background:linear-gradient(180deg, rgba(23,162,184,1), rgba(13,117,134,1))}
-    .btn.green{background:linear-gradient(180deg, rgba(46,204,113,1), rgba(26,145,78,1))}
-    .btn.gold{background:linear-gradient(180deg, rgba(255,204,51,1), rgba(196,143,20,1));color:#13202a}
-    .btn.red{background:linear-gradient(180deg, rgba(255,77,77,1), rgba(186,37,37,1))}
-    .btn.small{padding:.5rem .7rem;border-radius:10px;width:auto;font-weight:800}
-    .btn:disabled{opacity:.55;cursor:not-allowed}
-
-    .pillbar{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0 0}
-    .pill{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);
-      padding:.35rem .6rem;border-radius:999px;
-      font-size:.9rem;color:rgba(255,255,255,.85);
-      font-weight:750;
+    .options-list li {
+      background: #ececec;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
     }
-
-    #screenStart,#screenQuiz,#screenEnd{display:none}
-    #screenStart{display:block}
-
-    .row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .qmeta{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
-
-    .question{font-size:clamp(1.1rem, 2.2vw, 1.45rem);margin:.2rem 0 .8rem}
-    .media{margin:.7rem 0 1rem;display:flex;justify-content:center;align-items:center}
-    .media img{max-width:100%;max-height:320px;border-radius:14px;border:1px solid rgba(255,255,255,.16);box-shadow:0 12px 30px rgba(0,0,0,.35)}
-    .media audio{width:min(520px, 100%);border-radius:12px}
-
-    .choices{display:grid;grid-template-columns:1fr;gap:.55rem;margin:.6rem 0 0}
-    .choice{
-      text-align:left;background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.15);
-      border-radius:14px;padding:.75rem .85rem;
-      cursor:pointer;font-weight:850;line-height:1.25;
-      transition:transform .06s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
+    .options-list li:hover {
+      background: #e0e0e0;
     }
-    .choice:hover{background:rgba(255,255,255,.14)}
-    .choice:active{transform:translateY(1px)}
-    .choice.correct{background:rgba(46,204,113,.22);border-color:rgba(46,204,113,.55)}
-    .choice.wrong{background:rgba(255,77,77,.18);border-color:rgba(255,77,77,.55)}
-    .choice.disabled{opacity:.85;cursor:not-allowed}
-
-    .feedback{
-      margin:.85rem 0 0;padding:.75rem;border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);
-      display:none;
-      font-weight:750;
+    .correct {
+      background-color: #c8e6c9 !important;  /* light green */
     }
-    .feedback.show{display:block}
-    .feedback.good{border-color:rgba(46,204,113,.55);background:rgba(46,204,113,.12)}
-    .feedback.bad{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.10)}
-
-    .scoreboard{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin:.4rem 0 0}
-    .teamCard{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;padding:.7rem .8rem;
-      min-width:210px;box-shadow:0 10px 20px rgba(0,0,0,.18);
+    .wrong {
+      background-color: #ffcdd2 !important;  /* light red */
     }
-    .teamName{
-      font-weight:900;font-size:1.05rem;letter-spacing:.2px;
-      padding:.25rem .4rem;border-radius:10px;display:inline-block;
-      cursor:text;background:rgba(0,0,0,.18);
-      border:1px dashed rgba(255,255,255,.18);
+    .disabled {
+      pointer-events: none;
     }
-    .teamName[contenteditable="true"]{outline:none;box-shadow:var(--ring)}
-    .teamScore{margin-top:.55rem;font-size:2rem;font-weight:950;letter-spacing:.4px}
-    .scoreBtns{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem;justify-content:center}
-    .mini{font-size:.92rem;color:rgba(255,255,255,.75);margin-top:.35rem}
-
-    .groupControls{margin-top:1rem;display:grid;grid-template-columns:repeat(12,1fr);gap:.7rem}
-    .gc-left{grid-column:span 8}
-    .gc-right{grid-column:span 4}
-    @media(max-width:860px){.gc-left,.gc-right{grid-column:span 12}}
-
-    .buzzRow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-    .buzzTag{
-      background:rgba(255,204,51,.16);
-      border:1px solid rgba(255,204,51,.35);
-      padding:.35rem .6rem;border-radius:999px;
-      font-weight:900;color:#ffe9a8;
+    #feedback {
+      font-weight: bold;
+      margin: 10px;
     }
-
-    .bigScore{font-size:clamp(2rem, 4vw, 3rem);font-weight:950;color:#ffe9a8;text-shadow:0 12px 26px rgba(0,0,0,.35)}
-    input[type="text"]{
-      width:100%;padding:.85rem .9rem;border-radius:14px;
-      border:1px solid rgba(255,255,255,.22);
-      background:rgba(0,0,0,.28);color:var(--text);
-      font-weight:800;font-size:1rem;outline:none;
+    #controls {
+      margin: 20px 0;
     }
-    input[type="text"]:focus{box-shadow:var(--ring)}
-
-    .snowflakes{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.8}
-    .snowflake{
-      position:fixed;top:-10%;
-      color:white;text-shadow:0 0 10px rgba(255,255,255,.55);
-      user-select:none;
-      animation-name:snowfall,sway;
-      animation-timing-function:linear,ease-in-out;
-      animation-iteration-count:infinite,infinite;
-      will-change:transform,top;
-      opacity:.9;font-size:1.2rem;
+    #controls button {
+      padding: 8px 12px;
+      font-size: 1em;
+      margin: 5px;
     }
-    @keyframes snowfall{0%{top:-10%}100%{top:110%}}
-    @keyframes sway{0%,100%{transform:translateX(0)}50%{transform:translateX(70px)}}
-    .snowflake:nth-child(1){left:2%; animation-duration:12s, 4.2s; animation-delay:0s,0s}
-    .snowflake:nth-child(2){left:10%;animation-duration:10s, 3.8s; animation-delay:1s,.4s}
-    .snowflake:nth-child(3){left:18%;animation-duration:14s, 4.5s; animation-delay:2s,1.1s}
-    .snowflake:nth-child(4){left:28%;animation-duration:11s, 4s;   animation-delay:.5s,.2s}
-    .snowflake:nth-child(5){left:36%;animation-duration:13s, 4.7s; animation-delay:1.8s,1.6s}
-    .snowflake:nth-child(6){left:46%;animation-duration:9.5s,3.4s; animation-delay:.2s,.7s}
-    .snowflake:nth-child(7){left:55%;animation-duration:15s,4.9s;  animation-delay:3s,1.9s}
-    .snowflake:nth-child(8){left:64%;animation-duration:10.5s,3.9s;animation-delay:1.1s,.9s}
-    .snowflake:nth-child(9){left:74%;animation-duration:12.5s,4.1s;animation-delay:2.4s,1.2s}
-    .snowflake:nth-child(10){left:82%;animation-duration:9.8s,3.6s;animation-delay:.7s,.5s}
-    .snowflake:nth-child(11){left:90%;animation-duration:14.2s,4.6s;animation-delay:2.8s,1.8s}
-    .snowflake:nth-child(12){left:96%;animation-duration:11.6s,4s;animation-delay:1.4s,.8s}
+    #group-scoreboard table {
+      margin: 0 auto 20px;
+      border-collapse: collapse;
+    }
+    #group-scoreboard th, #group-scoreboard td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+    }
+    #group-scoreboard td button {
+      margin: 0 5px;
+      padding: 4px 8px;
+    }
+    #instructions {
+      text-align: left;
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+    }
+    #instructions h2 {
+      text-align: left;
+    }
   </style>
 </head>
-
 <body>
-  <div class="snowflakes" aria-hidden="true">
-    <div class="snowflake">❅</div><div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❅</div>
-    <div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❅</div><div class="snowflake">❅</div>
-    <div class="snowflake">❆</div><div class="snowflake">❅</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+
+<div id="game-container">
+  <h1>Christmas Trivia Game</h1>
+
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <h3>Select Game Mode and Number of Questions</h3>
+    <p>
+      <label><input type="radio" name="mode" value="solo" checked> Solo Play</label>
+      <label><input type="radio" name="mode" value="group"> Group Play</label>
+    </p>
+    <div id="team-select" style="display: none; margin: 10px;">
+      Number of teams: 
+      <select id="num-teams">
+        <option value="2">2 Teams</option>
+        <option value="3">3 Teams</option>
+        <option value="4">4 Teams</option>
+      </select>
+    </div>
+    <p>
+      Number of questions: 
+      <select id="num-questions">
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="70">70</option>
+      </select>
+    </p>
+    <button id="start-button">Start Game</button>
   </div>
 
-  <div class="topbar">
-    <div class="brand">🎄 Christmas Trivia Party Game</div>
+  <!-- Question Screen -->
+  <div id="question-screen" style="display: none;">
+    <div id="score-display" style="margin-bottom: 10px;"></div>
+    <div class="question-count" id="progress"></div>
+    <div id="question-text"></div>
+    <ul id="options" class="options-list"></ul>
+    <div id="feedback"></div>
+    <div id="controls">
+      <button id="reveal-button" style="display: none;">Reveal Options</button>
+      <button id="show-answer-button" style="display: none;">Reveal Answer</button>
+      <button id="next-button" style="display: none;">Next Question</button>
+    </div>
   </div>
 
-  <div class="wrap">
-    <!-- START -->
-    <section id="screenStart" class="card soft">
-      <h1>Holiday Trivia</h1>
-      <p>
-        Solo mode auto-scores (+2 / -1) and posts to your Google Sheet.
-        Group mode is host-operated with early buzz potential.
-      </p>
-
-      <div class="grid">
-        <div class="col-6 card">
-          <h2>Solo Play</h2>
-          <p>Choices show immediately. 30 random questions.</p>
-          <button id="btnSolo" class="btn green">Play Solo</button>
-        </div>
-
-        <div class="col-6 card">
-          <h2>Group Play</h2>
-          <p>Question shows first. Teams can buzz early for double eligibility.</p>
-          <button id="btnGroup2" class="btn alt">Play Group (2 Teams)</button>
-          <button id="btnGroup3" class="btn alt">Play Group (3 Teams)</button>
-          <button id="btnGroup4" class="btn alt">Play Group (4 Teams)</button>
-
-          <div class="pillbar">
-            <span class="pill">No “Which of these…” prompts</span>
-            <span class="pill">Early buzz friendly</span>
-            <span class="pill">Manual scoring</span>
-          </div>
-        </div>
-
-        <div class="col-12 card">
-          <h3>Optional media folders</h3>
-          <p style="margin:0">
-            Put files in <b>/audio</b> and <b>/images</b> in your repo.
-            Questions reference placeholders like <code>audio/jingle_bells.mp3</code> and <code>images/home_alone.jpg</code>.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- QUIZ -->
-    <section id="screenQuiz" class="card soft">
-      <div id="scoreboardWrap" class="card" style="display:none">
-        <h3 style="margin-bottom:.2rem">Scoreboard</h3>
-        <div class="mini">Click a team name to edit. Scores can go negative.</div>
-        <div id="scoreboard" class="scoreboard"></div>
-      </div>
-
-      <div class="row">
-        <div class="qmeta">
-          <span id="pillMode" class="pill">Mode: ?</span>
-          <span id="pillProgress" class="pill">Q 1 / 30</span>
-          <span id="pillScore" class="pill" style="display:none">Score: 0</span>
-          <span id="pillCategory" class="pill">Category: 🎁</span>
-        </div>
-        <div class="qmeta">
-          <button id="btnRestart" class="btn small red">Restart</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:1rem">
-        <div id="questionText" class="question">Question goes here</div>
-        <div id="media" class="media"></div>
-
-        <div id="choices" class="choices"></div>
-
-        <div id="feedback" class="feedback"></div>
-
-        <div id="groupControls" class="groupControls" style="display:none">
-          <div class="gc-left card">
-            <h3 style="margin:.1rem 0 .4rem">Group Controls</h3>
-
-            <div class="buzzRow" style="margin:.45rem 0 .6rem">
-              <span style="font-weight:850">Buzz:</span>
-              <div id="buzzButtons" class="buzzRow"></div>
-              <span id="buzzStatus" class="buzzTag" style="display:none"></span>
-              <button id="btnClearBuzz" class="btn small red" style="display:none">Clear Buzz</button>
-            </div>
-
-            <div class="buzzRow">
-              <button id="btnReveal" class="btn gold">Reveal Choices</button>
-              <button id="btnPass" class="btn alt">Pass</button>
-              <button id="btnNext" class="btn green" disabled>Next Question</button>
-            </div>
-
-            <div class="mini" style="margin-top:.55rem">
-              If a team buzzes before reveal, a correct answer can be worth <b>+4</b> (double) instead of +2.
-            </div>
-          </div>
-
-          <div class="gc-right card">
-            <h3 style="margin:.1rem 0 .4rem">Quick Score Hint</h3>
-            <div id="scoreHint" class="pill" style="display:none; text-align:left"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- END -->
-    <section id="screenEnd" class="card soft">
-      <h2 id="endTitle">Finished!</h2>
-
-      <div id="soloEndBlock" style="display:none">
-        <div class="bigScore" id="endScore">Score: 0</div>
-        <p>Enter your name to save your score to the leaderboard.</p>
-
-        <div class="grid">
-          <div class="col-6">
-            <input id="nameInput" type="text" maxlength="50" placeholder="Your name" />
-          </div>
-          <div class="col-6">
-            <button id="btnSubmit" class="btn green">Submit Score</button>
-          </div>
-          <div class="col-12">
-            <div id="submitStatus" class="pill" style="display:none"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="groupEndBlock" style="display:none">
-        <div class="bigScore" id="winnerText">Winner goes here</div>
-        <div id="finalScores" class="card" style="margin-top:1rem"></div>
-      </div>
-
-      <div style="margin-top:1rem">
-        <button id="btnPlayAgain" class="btn alt">Back to Start</button>
-      </div>
-    </section>
+  <!-- Scoreboard for Group Mode -->
+  <div id="group-scoreboard" style="display: none;">
+    <h3>Scoreboard</h3>
+    <table id="score-table"></table>
   </div>
+
+  <!-- Result Screen -->
+  <div id="result-screen" style="display: none;">
+    <h2 id="result-text"></h2>
+    <button id="restart-button">Play Again</button>
+  </div>
+</div>
+
+<!-- Google Sheets Integration Instructions -->
+<div id="instructions">
+  <h2>Google Sheets Integration Setup</h2>
+  <p>This game can send final scores to a Google Sheets log. To set this up, follow these steps:</p>
+  <ol>
+    <li>Create a new Google Sheet (or open your existing sheet where you want to log scores).</li>
+    <li>Click on <strong>Extensions > Apps Script</strong> in the Google Sheet to open the Apps Script editor.</li>
+    <li>Copy the Google Apps Script code provided (or given by the developer) into the script editor. This script should capture HTTP GET requests and append the score data to your sheet. For example, a simple script might look like:<br>
+      <pre style="background:#f8f8f8; padding:10px; border:1px solid #ccc;">
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // Append a new row with timestamp, mode, team/name, and score
+  sheet.appendRow([new Date(), e.parameter.mode || "", e.parameter.team || e.parameter.name || "", e.parameter.score || ""]);
+  return ContentService.createTextOutput("Success");
+}
+      </pre>
+      Ensure the parameter names (like <code>mode</code>, <code>team</code>, <code>name</code>, <code>score</code>) match what the game sends.</li>
+    <li>Save the script, then click <strong>Deploy > New deployment</strong>. Choose <strong>Web App</strong> as the deployment type.</li>
+    <li>In the deployment settings, set <strong>Execute as</strong> to <em>Me (your account)</em>, and set <strong>Who has access</strong> to <em>Anyone</em> (meaning even anonymous can access). This is required so the game can send data without needing authentication.</li>
+    <li>Deploy the web app and copy the Web App URL that is generated. It will look similar to the provided URL (starting with <code>https://script.google.com/macros/s/...</code>).</li>
+    <li>In the game code, find the line with <code>scriptURL</code> and replace the placeholder or provided URL with your own Web App URL. (The code already includes the example URL provided.)</li>
+    <li>Open your GitHub Pages game and play a full game to test the integration. After the game ends, check your Google Sheet – you should see a new row added with the game mode, team or player, and score information.</li>
+  </ol>
+  <p>If the score submission isn't appearing, make sure that your Apps Script Project is deployed as a web app and accessible to "Anyone, even anonymous," and that you've updated the <code>scriptURL</code> in the code. You can also open the URL directly in a browser with appropriate parameters (e.g. <code>?mode=solo&score=10</code>) to see if it logs a row in the sheet for testing.</p>
+</div>
 
 <script>
-/* ============================
-   Google Sheets Web App URL
-   ============================ */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7ZsgfPb-dw1oxroQT5e3WyhDFspOP3yalxywQReOviGqGpx_slZ07LmnnRgnUJ-ikxw/exec";
-
-/* ============================
-   Utilities
-   ============================ */
-const STOP_WORDS = new Set([
-  "the","a","an","and","of","to","in","for","is","it","on","at","with","by",
-  "christmas","holiday","holidays","xmas","movie","film","song"
-]);
-
-function tokenize(s){
-  return String(s)
-    .toLowerCase()
-    .replace(/[^a-z0-9\s']/g," ")
-    .split(/\s+/)
-    .filter(Boolean)
-    .filter(w => !STOP_WORDS.has(w));
-}
-
-function promptContainsAnswerWords(prompt, answer){
-  const pset = new Set(tokenize(prompt));
-  const a = tokenize(answer);
-  return a.some(w => pset.has(w));
-}
-
-function shuffle(arr){
-  for (let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
-}
-
-function pick4Distinct(list){
-  const arr = [...new Set(list)];
-  shuffle(arr);
-  return arr.slice(0,4);
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
-}
-
-function stopAnyAudio(){
-  document.querySelectorAll("audio").forEach(a=>{ try{ a.pause(); a.currentTime=0; }catch(_){} });
-}
-
-/* ============================
-   Question Model
-   ============================ */
-function Q(id, prompt, answer, distractors, meta={}) {
-  return {
-    id,
-    prompt,
-    answer,
-    distractors,
-    category: meta.category || "General",
-    type: meta.type || "text", // text | image | audio
-    mediaSrc: meta.mediaSrc || null,
-    template: meta.template || "misc",
-    avoidAnswerWords: meta.avoidAnswerWords ?? false
-  };
-}
-
-/* ============================
-   Movie Titles + SAFE descriptions (avoid title keywords)
-   ============================ */
-const MOVIE_TITLES = [
-  {id:"mv_ha", title:"Home Alone", clue:"A kid is accidentally left behind and defends his house from two burglars using clever traps."},
-  {id:"mv_elf", title:"Elf", clue:"A grown man raised at the North Pole travels to New York City to find his real father."},
-  {id:"mv_polar", title:"The Polar Express", clue:"A boy takes a magical train ride to the North Pole on Christmas Eve."},
-  {id:"mv_grinch", title:"How the Grinch Stole Christmas", clue:"A cranky green creature tries to ruin the holiday for a cheerful town."},
-  {id:"mv_story", title:"A Christmas Story", clue:"A boy desperately wants a BB gun, but adults keep warning him he’ll shoot his eye out."},
-  {id:"mv_34", title:"Miracle on 34th Street", clue:"A man claims he is the famous gift-giver, and a court case tests whether he’s telling the truth."},
-  {id:"mv_clause", title:"The Santa Clause", clue:"A man accidentally becomes the new holiday gift-giver after a surprising night on his roof."},
-  {id:"mv_vac", title:"National Lampoon's Christmas Vacation", clue:"A family’s holiday plans go hilariously wrong, including an over-the-top light display."},
-  {id:"mv_wonder", title:"It's a Wonderful Life", clue:"A man sees what the world would be like if he had never been born."},
-  {id:"mv_rud", title:"Rudolph the Red-Nosed Reindeer", clue:"A reindeer with a glowing nose finds his place and helps guide a sleigh through a storm."},
-  {id:"mv_frosty", title:"Frosty the Snowman", clue:"A snowman comes to life thanks to a magical hat."},
-  {id:"mv_cb", title:"A Charlie Brown Christmas", clue:"A boy feels down about the season and learns what it’s really about while directing a play."},
-  {id:"mv_arth", title:"Arthur Christmas", clue:"An animated adventure where a delivery team races to bring one last missed present."},
-  {id:"mv_klaus", title:"Klaus", clue:"A selfish postman teams up with a mysterious toymaker and changes a town forever."},
-  {id:"mv_muppet", title:"The Muppet Christmas Carol", clue:"A grouchy businessman is visited by spirits who show him his past, present, and future."},
-  {id:"mv_nightmare", title:"The Nightmare Before Christmas", clue:"A Halloween town leader discovers another holiday world and tries to take it over."},
-  {id:"mv_jingle", title:"Jingle All the Way", clue:"A dad desperately hunts for a sold-out action figure on the day before Christmas."},
-  {id:"mv_scrooged", title:"Scrooged", clue:"A rude TV executive is visited by spirits who force him to rethink his life."},
-  {id:"mv_white", title:"White Christmas", clue:"Singers put on a show to help their former commander and a struggling inn."},
-  {id:"mv_prancer", title:"Prancer", clue:"A girl believes she has found one of the famous reindeer and tries to protect him."},
-  {id:"mv_kranks", title:"Christmas with the Kranks", clue:"A couple tries to skip the holiday, but their neighborhood won’t allow it."},
-  {id:"mv_deck", title:"Deck the Halls", clue:"Two neighbors compete in an escalating battle of decorations."},
-  {id:"mv_four", title:"Four Christmases", clue:"A couple ends up visiting four different family gatherings in one day."},
-  {id:"mv_chron", title:"The Christmas Chronicles", clue:"Kids accidentally mess up the big delivery night and help save Christmas."}
-];
-
-/* ============================
-   Premade-style questions (NO lyrics)
-   - Includes your examples (minus lyric-quoting ones)
-   - Plus many more in the same style
-   ============================ */
-const PREMADE = [
-  Q("pm_001", "Which popular Christmas beverage is also called “milk punch”?", "Eggnog",
-    ["Hot chocolate","Apple cider","Lemonade","Fruit punch"], {category:"Food & Treats", template:"premade"}),
-
-  Q("pm_002", "What did the other reindeer not let Rudolph do because of his shiny red nose?", "Join in any reindeer games",
-    ["Lead Santa’s sleigh","Deliver presents","Sleep in the barn","Wear a bell"], {category:"Santa & Reindeer", template:"premade"}),
-
-  Q("pm_003", "How many ghosts show up in A Christmas Carol (not counting Scrooge)?", "Four",
-    ["One","Two","Three","Five"], {category:"Movies", template:"premade"}),
-
-  Q("pm_004", "Where was baby Jesus born?", "Bethlehem",
-    ["Nazareth","Jerusalem","Rome","Capernaum"], {category:"Christmas Story", template:"premade"}),
-
-  Q("pm_005", "Miracle on 34th Street is based on a real-life department store. Which one?", "Macy’s",
-    ["Target","Walmart","Nordstrom","Sears"], {category:"Movies", template:"premade"}),
-
-  Q("pm_006", "Which modern-day country was St. Nicholas born in?", "Turkey",
-    ["Greece","Italy","France","Spain"], {category:"History", template:"premade"}),
-
-  Q("pm_007", "In It’s a Wonderful Life, what happens every time a bell rings?", "An angel got his wings",
-    ["A candle lights itself","It starts snowing","A door opens","Santa laughs"], {category:"Movies", template:"premade"}),
-
-  Q("pm_008", "In Charles Dickens’s A Christmas Carol, what was Scrooge’s first name?", "Ebenezer",
-    ["Edward","Eugene","Elijah","Ernest"], {category:"Movies", template:"premade"}),
-
-  Q("pm_009", "Which branch of the U.S. military runs “Toys for Tots”?", "The Marines",
-    ["The Navy","The Air Force","The Army","The Coast Guard"], {category:"History", template:"premade"}),
-
-  Q("pm_010", "About 1.3 billion of these are sent each year in the U.S. during Christmas. What are they?", "Christmas cards",
-    ["Pumpkins","Fireworks","Valentine hearts","School pencils"], {category:"Traditions", template:"premade"}),
-
-  Q("pm_011", "What do children traditionally get from Santa if they’re on the “Naughty List”?", "A lump of coal",
-    ["A gold medal","A new bike","A snow globe","A candy cane"], {category:"Santa & Reindeer", template:"premade"}),
-
-  Q("pm_012", "What is the name of Rudolph’s girlfriend in the classic story?", "Clarice",
-    ["Vixen","Dancer","Mittens","Sally"], {category:"Santa & Reindeer", template:"premade"}),
-
-  Q("pm_013", "In A Christmas Story, what is Ralphie’s little brother’s name?", "Randy",
-    ["Ronnie","Richie","Robby","Ray"], {category:"Movies", template:"premade"}),
-
-  Q("pm_014", "Which country started the tradition of putting up a Christmas tree?", "Germany",
-    ["Italy","Spain","Canada","Brazil"], {category:"History", template:"premade"}),
-
-  Q("pm_015", "In Canada, what holiday is celebrated the day after Christmas?", "Boxing Day",
-    ["Founders Day","Maple Day","New Year’s Eve","Remembrance Day"], {category:"History", template:"premade"}),
-
-  Q("pm_016", "In which war did a famous “Christmas Truce” take place?", "World War I",
-    ["World War II","Civil War","Korean War","Vietnam War"], {category:"History", template:"premade"}),
-
-  Q("pm_017", "What’s the name of the Grinch’s dog?", "Max",
-    ["Buddy","Rudy","Bolt","Rex"], {category:"Movies", template:"premade"}),
-
-  Q("pm_018", "Which action movie set on Christmas Eve is often debated as a Christmas movie?", "Die Hard",
-    ["Top Gun","Rocky","Rambo","Speed"], {category:"Movies", template:"premade"}),
-
-  Q("pm_019", "Which meal do people in Japan traditionally eat on Christmas?", "Kentucky Fried Chicken",
-    ["Sushi","Ramen","Tempura","Tacos"], {category:"World Traditions", template:"premade"}),
-
-  Q("pm_020", "What is a common name for Christmas trees besides “Christmas tree”?", "Yule tree",
-    ["Pine tower","Holiday bush","Snow shrub","Evergreen wand"], {category:"Traditions", template:"premade"}),
-
-  Q("pm_021", "What decoration was historically made from real silver?", "Tinsel",
-    ["Confetti","Ribbon","Garland","Bows"], {category:"Traditions", template:"premade"}),
-
-  Q("pm_022", "Which Christmas ballet premiered in 1892?", "The Nutcracker",
-    ["Swan Lake","Cinderella","Sleeping Beauty","Peter Pan"], {category:"History", template:"premade"}),
-
-  Q("pm_023", "Which fairy tale inspired early gingerbread houses?", "Hansel and Gretel",
-    ["Cinderella","Jack and the Beanstalk","Rapunzel","Goldilocks"], {category:"History", template:"premade"}),
-
-  Q("pm_024", "In Home Alone, where is the family traveling when Kevin is left behind?", "Paris",
-    ["London","Rome","New York","Los Angeles"], {category:"Movies", template:"premade"}),
-
-  Q("pm_025", "In The Polar Express, which actor voices multiple roles?", "Tom Hanks",
-    ["Jim Carrey","Will Ferrell","Tim Allen","Adam Sandler"], {category:"Movies", template:"premade"}),
-
-  Q("pm_026", "Which company was an early famous user of Santa in advertising?", "Coca-Cola",
-    ["Pepsi","Ford","Nike","LEGO"], {category:"History", template:"premade"}),
-
-  Q("pm_027", "Which Christmas song was originally written for Thanksgiving (later became a holiday song)?", "Jingle Bells",
-    ["Silent Night","O Holy Night","The First Noel","Carol of the Bells"], {category:"Songs", template:"premade"}),
-
-  Q("pm_028", "What are three of Santa’s reindeer names that start with the letter “D”?", "Dancer, Dasher and Donner",
-    ["Cupid, Comet and Clarice","Vixen, Vance and Vito","Blitzen, Buddy and Buster","Prancer, Pouncer and Piper"], {category:"Santa & Reindeer", template:"premade"}),
-
-  Q("pm_029", "In the poem “‘Twas the Night Before Christmas,” how many reindeer are mentioned?", "Eight",
-    ["Six","Seven","Nine","Ten"], {category:"History", template:"premade"}),
-
-  Q("pm_030", "In North America, what’s another name for wild reindeer?", "Caribou",
-    ["Moose","Elk","Bison","Antelope"], {category:"Santa & Reindeer", template:"premade"}),
-
-  Q("pm_031", "What is the name of the last ghost that visits Scrooge?", "The Ghost of Christmas Yet To Come",
-    ["The Ghost of Christmas Past","The Ghost of Christmas Present","The Ghost of New Year’s Day","The Ghost of Halloween"], {category:"Movies", template:"premade"}),
-
-  Q("pm_032", "What food “danced in children’s heads” in ‘Twas the Night Before Christmas?", "Sugar plums",
-    ["Candy canes","Apples","Cookies","Hot dogs"], {category:"Traditions", template:"premade"}),
-
-  Q("pm_033", "In Miracle on 34th Street, what is the real store mentioned as part of the story?", "Macy’s",
-    ["Bloomingdale’s","Target","Walmart","Kohl’s"], {category:"Movies", template:"premade"}),
-
-  Q("pm_034", "What is the name of George Bailey’s guardian angel in It’s a Wonderful Life?", "Clarence Odbody",
-    ["Gabriel North","Michael Star","Joseph Holly","Edwin Bell"], {category:"Movies", template:"premade"}),
-
-  Q("pm_035", "In the 1964 Rudolph the Red-Nosed Reindeer, what was the name of Rudolph’s elf friend?", "Hermey",
-    ["Harvey","Henry","Herbie","Herman"], {category:"Movies", template:"premade"}),
-
-  Q("pm_036", "Which family is featured in National Lampoon’s Christmas Vacation?", "The Griswolds",
-    ["The McCallisters","The Parkers","The Baileys","The Browns"], {category:"Movies", template:"premade"}),
-
-  Q("pm_037", "What is a popular horned figure in folklore said to punish naughty children?", "Krampus",
-    ["Gryla","Jack Frost","The Yeti","The Sandman"], {category:"Folklore", template:"premade"}),
-
-  Q("pm_038", "What is a traditional hot spiced cider drink enjoyed at winter celebrations?", "Wassail",
-    ["Lemonade","Milkshake","Iced tea","Soda pop"], {category:"Food & Treats", template:"premade"}),
-
-  Q("pm_039", "How do you say “Merry Christmas” in Spanish?", "Feliz Navidad",
-    ["Bonjour Noël","Buon Natale","Frohe Weihnachten","Joyeux Pâques"], {category:"Languages", template:"premade"}),
-
-  Q("pm_040", "What is the best-selling Christmas song ever (by recording)?", "White Christmas",
-    ["Jingle Bells","Silent Night","Joy to the World","Deck the Halls"], {category:"Songs", template:"premade"})
-];
-
-/* ============================
-   Clue banks (lots of hardcoded Q/A, single-correct)
-   ============================ */
-const CLUE_OBJECTS = [
-  {id:"ob_eggnog", category:"Food & Treats", answer:"Eggnog", clue:"A creamy holiday drink often served cold and topped with nutmeg."},
-  {id:"ob_mistletoe", category:"Traditions", answer:"Mistletoe", clue:"A plant people stand under for a traditional holiday kiss."},
-  {id:"ob_wreath", category:"Traditions", answer:"Wreath", clue:"A circular decoration often made of evergreen branches and hung on doors."},
-  {id:"ob_stocking", category:"Traditions", answer:"Stocking", clue:"A sock-shaped decoration hung for small gifts."},
-  {id:"ob_candycane", category:"Food & Treats", answer:"Candy cane", clue:"A striped peppermint candy shaped like a shepherd’s staff."},
-  {id:"ob_gingerbread", category:"Food & Treats", answer:"Gingerbread", clue:"A spiced cookie often used to build tiny houses."},
-  {id:"ob_hotchoc", category:"Food & Treats", answer:"Hot chocolate", clue:"A warm sweet drink often topped with marshmallows."},
-  {id:"ob_fruitcake", category:"Food & Treats", answer:"Fruitcake", clue:"A dense cake known for a famously long shelf life."},
-  {id:"ob_tinsel", category:"Traditions", answer:"Tinsel", clue:"Shiny strands used on trees, historically made from real silver."},
-  {id:"ob_boxing", category:"History", answer:"Boxing Day", clue:"A holiday celebrated the day after Christmas in Canada and the UK."},
-  {id:"ob_krampus", category:"Folklore", answer:"Krampus", clue:"A horned folklore figure said to punish naughty children."},
-  {id:"ob_nutcracker", category:"History", answer:"The Nutcracker", clue:"A famous ballet from 1892 often performed during the holidays."},
-  {id:"ob_yulelog", category:"Traditions", answer:"Yule log", clue:"A traditional log (or cake shaped like one) linked to winter celebrations."},
-  {id:"ob_advent", category:"Traditions", answer:"Advent calendar", clue:"A calendar used to count down the days until Christmas."},
-  {id:"ob_menorah", category:"General", answer:"Menorah", clue:"A special candle holder used during Hanukkah (often around the holiday season)."},
-  {id:"ob_giftwrap", category:"Traditions", answer:"Wrapping paper", clue:"Colorful paper used to cover presents."},
-  {id:"ob_ribbon", category:"Traditions", answer:"Ribbon", clue:"A long decorative strip often tied into bows on gifts."},
-  {id:"ob_ornament", category:"Traditions", answer:"Ornament", clue:"A decoration hung on a tree (often shiny or colorful)."},
-  {id:"ob_star", category:"Traditions", answer:"Star", clue:"A common tree-top decoration that represents the Star of Bethlehem."},
-  {id:"ob_angel", category:"Traditions", answer:"An angel", clue:"A common tree-top decoration that represents a heavenly messenger."}
-];
-
-const TOY_CLUES = [
-  {id:"toy_001", answer:"Tickle Me Elmo", clue:"A hard-to-find 1996 toy featuring a giggling Sesame Street character."},
-  {id:"toy_002", answer:"Furby", clue:"A late-1990s electronic pet toy known for speaking its own made-up language."},
-  {id:"toy_003", answer:"Tamagotchi", clue:"A pocket-sized digital pet you have to feed and care for."},
-  {id:"toy_004", answer:"Cabbage Patch Kids", clue:"A doll line known for unique names and adoption papers."},
-  {id:"toy_005", answer:"Beanie Babies", clue:"Small collectible stuffed toys famous for heart-shaped tags."},
-  {id:"toy_006", answer:"Rubik's Cube", clue:"A twisting puzzle cube where you try to match colors on each side."},
-  {id:"toy_007", answer:"Nintendo Switch", clue:"A game system known for detachable controllers called Joy-Cons."},
-  {id:"toy_008", answer:"PlayStation", clue:"A video game console brand known for controllers with symbol buttons (triangle, circle, X, square)."},
-  {id:"toy_009", answer:"Xbox", clue:"A video game console brand made by Microsoft."},
-  {id:"toy_010", answer:"LEGO", clue:"Plastic building bricks used to build sets like castles, spaceships, and cities."}
-];
-
-/* ============================
-   Audio & Image placeholders (optional)
-   ============================ */
-const MEDIA_QUESTIONS = [
-  Q("au_001", "AUDIO: Identify this Christmas song from the short clip.", "Jingle Bells",
-    ["Silent Night","Deck the Halls","Winter Wonderland","Jingle Bell Rock"],
-    {category:"Audio", template:"audio", type:"audio", mediaSrc:"audio/jingle_bells.mp3"}),
-
-  Q("im_001", "IMAGE: Name the movie shown in this picture.", "Home Alone",
-    ["Elf","A Christmas Story","The Santa Clause","How the Grinch Stole Christmas"],
-    {category:"Images", template:"image", type:"image", mediaSrc:"images/home_alone.jpg"})
-];
-
-/* ============================
-   Build movie description questions (no title tokens in prompt)
-   ============================ */
-function buildMovieDescriptionQuestions(){
-  const out = [];
-  const titles = MOVIE_TITLES.map(m=>m.title);
-  for (const m of MOVIE_TITLES){
-    const distractors = pick4Distinct(titles.filter(t=>t!==m.title));
-    const q = Q(
-      m.id,
-      `Which Christmas movie fits this description? ${m.clue}`,
-      m.title,
-      distractors,
-      {category:"Movies", template:"movie_desc", avoidAnswerWords:true}
-    );
-    // enforce: prompt shouldn't contain meaningful title words
-    if (!promptContainsAnswerWords(q.prompt, q.answer)) out.push(q);
-  }
-  return out;
-}
-
-/* ============================
-   Build clue questions (objects + toys)
-   ============================ */
-function buildClueQuestions(){
-  const out = [];
-  const allAnswers = [
-    ...CLUE_OBJECTS.map(x=>x.answer),
-    ...TOY_CLUES.map(x=>x.answer)
+  // Question pool: an array of question objects with question, correct answer, and distractors
+  var questions = [
+    { question: "In the song “Frosty the Snowman,” what made Frosty come to life?",
+      correct: "An old silk hat",
+      wrong: ["A corncob pipe", "A magical scarf", "Christmas snow", "Holiday cheer"] },
+    { question: "What Christmas decoration was originally made from strands of silver?",
+      correct: "Tinsel",
+      wrong: ["Garland", "Wreaths", "String lights", "Popcorn garlands"] },
+    { question: "What Christmas beverage is also known as “milk punch?”",
+      correct: "Eggnog",
+      wrong: ["Hot cocoa", "Mulled wine", "Apple cider", "Hot buttered rum"] },
+    { question: "Who played George Bailey in the Christmas classic “It’s a Wonderful Life?”",
+      correct: "Jimmy Stewart",
+      wrong: ["Cary Grant", "Bing Crosby", "Gary Cooper", "Henry Fonda"] },
+    { question: "Per a recent holiday fad, what “spy” hides around the house, reporting back to Santa on who has been naughty and nice?",
+      correct: "The Elf on the Shelf",
+      wrong: ["Santa’s Spy", "Christmas Scout", "Reindeer on the Roof", "The Yule Watchman"] },
+    { question: "What Christmas-themed ballet premiered in Saint Petersburg, Russia in 1892?",
+      correct: "The Nutcracker",
+      wrong: ["Swan Lake", "Sleeping Beauty", "The Snow Queen", "Coppélia"] },
+    { question: "One of Santa’s reindeer shares a name with a famous symbol of Valentine’s Day. Which reindeer is that?",
+      correct: "Cupid",
+      wrong: ["Dasher", "Prancer", "Vixen", "Blitzen"] },
+    { question: "What much-reviled Christmas edible is known for its long shelf life?",
+      correct: "Fruitcake",
+      wrong: ["Mince pie", "Figgy pudding", "Eggnog", "Chestnuts"] },
+    { question: "What cartoon character’s name is used to describe a small, unsuccessful Christmas tree?",
+      correct: "Charlie Brown",
+      wrong: ["Snoopy", "The Grinch", "Bugs Bunny", "Mickey Mouse"] },
+    { question: "What’s the name of Rudolph’s girlfriend in the “Rudolph the Red-Nosed Reindeer” television special?",
+      correct: "Clarice",
+      wrong: ["Vixen", "Cupid", "Noelle", "Holly"] },
+    { question: "In the United States, over 2 billion of these are sent each year at Christmastime.",
+      correct: "Christmas cards",
+      wrong: ["Emails", "Packages", "Text messages", "Party invitations"] },
+    { question: "What animated 2004 film is about a train that carries kids to the North Pole on Christmas Eve?",
+      correct: "The Polar Express",
+      wrong: ["The Santa Clause", "Arthur Christmas", "Journey to the North Pole", "Santa Claus: The Movie"] },
+    { question: "What phrase, originally from “A Christmas Carol,” means to express displeasure at Christmas cheer?",
+      correct: "Bah humbug!",
+      wrong: ["Ho ho ho!", "Good grief!", "\"Nonsense!\"", "\"Poppycock!\""] },
+    { question: "What song was initially condemned by the Roman Catholic Church for allegedly portraying an adulterous affair?",
+      correct: "I Saw Mommy Kissing Santa Claus",
+      wrong: ["Santa Baby", "Baby, It’s Cold Outside", "Grandma Got Run Over by a Reindeer", "All I Want for Christmas Is You"] },
+    { question: "In “A Christmas Story,” what happens to Ralphie’s friend as a result of a “triple-dog dare” from another classmate?",
+      correct: "He gets his tongue stuck to a flagpole.",
+      wrong: ["He nearly shoots his eye out with a BB gun", "He falls and breaks his arm", "He spills hot cocoa on himself", "He gets stuck in a chimney"] },
+    { question: "What’s the German name for the song known in English as “O Christmas Tree?”",
+      correct: "O Tannenbaum",
+      wrong: ["O Weihnachtsbaum", "O Fir Tree", "O Evergreen", "\"Stille Nacht\""] },
+    { question: "What do children traditionally get in their stockings if they’re on the Naughty List?",
+      correct: "A lump of coal",
+      wrong: ["A bundle of sticks", "A potato", "Nothing (an empty stocking)", "A candy cane"] },
+    { question: "What “cool” character is said to leave icy patterns on windows on winter mornings?",
+      correct: "Jack Frost",
+      wrong: ["Old Man Winter", "Father Christmas", "Frosty the Snowman", "The Snow Queen"] },
+    { question: "What game, found under Christmas trees since 1978, had the tagline “the frantic marble munching game”?",
+      correct: "Hungry Hungry Hippos",
+      wrong: ["Pac-Man", "Mouse Trap", "Candy Land", "Marble Madness"] },
+    { question: "The name “Santa Claus” comes from the Dutch name for St. Nicholas (Sinterklaas).",
+      correct: "True – it originates from Dutch",
+      wrong: ["False – it comes from German", "False – it comes from French", "False – it was invented in America", "False – it comes from Swedish"] },
+    { question: "In 1981, Bob and Doug McKenzie released their own version of a classic Christmas song. Which song was that?",
+      correct: "The Twelve Days of Christmas",
+      wrong: ["Jingle Bells", "Deck the Halls", "Winter Wonderland", "O Christmas Tree"] },
+    { question: "What’s the name of the family featured in “National Lampoon’s Christmas Vacation”?",
+      correct: "The Griswolds",
+      wrong: ["The McCallisters", "The Parkers", "The Baileys", "The Murphys"] },
+    { question: "What beloved Christmas song was recorded by Puerto Rican singer José Feliciano in 1970?",
+      correct: "Feliz Navidad",
+      wrong: ["Blue Christmas", "Jingle Bell Rock", "Rockin’ Around the Christmas Tree", "Santa Claus Is Comin’ to Town"] },
+    { question: "What science fiction franchise had its own holiday television special in 1978?",
+      correct: "Star Wars",
+      wrong: ["Star Trek", "Doctor Who", "Battlestar Galactica", "Planet of the Apes"] },
+    { question: "The charity Toys for Tots is run by the reserve force of what branch of the U.S. military?",
+      correct: "The Marines",
+      wrong: ["Army Reserve", "Navy Reserve", "Air Force Reserve", "Coast Guard Reserve"] },
+    { question: "The first artificial Christmas tree was made in the 19th century using the feathers of what bird?",
+      correct: "Goose",
+      wrong: ["Turkey", "Chicken", "Duck", "Swan"] },
+    { question: "In North America, wild reindeer are known by what name?",
+      correct: "Caribou",
+      wrong: ["Moose", "Elk", "Antelope", "Mule Deer"] },
+    { question: "What holiday is celebrated the day after Christmas in the UK, Canada, and other Commonwealth countries?",
+      correct: "Boxing Day",
+      wrong: ["St. Stephen’s Day", "Kwanzaa", "Epiphany", "Commonwealth Day"] },
+    { question: "In Charles Dickens’ “A Christmas Carol,” what was Scrooge’s first name?",
+      correct: "Ebenezer",
+      wrong: ["Edmund", "Jedediah", "Phineas", "Augustus"] },
+    { question: "In the song “Grandma Got Run Over by a Reindeer,” what “incriminating” evidence was found on Grandma’s back?",
+      correct: "Claus marks",
+      wrong: ["Reindeer hoof prints", "Sleigh tracks", "Coal dust", "Santa’s hat"] },
+    { question: "According to legend, what holiday candy was shaped to resemble a shepherd’s staff to remind children of the shepherds who visited baby Jesus?",
+      correct: "Candy canes",
+      wrong: ["Gingerbread men", "Striped ribbon candy", "Sugar cookies", "Peppermint sticks"] },
+    { question: "In the song “We Wish You a Merry Christmas,” what type of pudding do carolers demand?",
+      correct: "Figgy pudding",
+      wrong: ["Plum pudding", "Fruitcake", "Mince pie", "Bread pudding"] },
+    { question: "What’s the name of the snowman who provides comic relief in Disney’s movie *Frozen*?",
+      correct: "Olaf",
+      wrong: ["Sven", "Kristoff", "Marshmallow", "Frosty"] },
+    { question: "What is the actual color of snow (i.e., snowflakes)?",
+      correct: "Colorless (translucent)",
+      wrong: ["White", "Blue", "Gray", "Pink"] },
+    { question: "Which animated TV show features Mr. Hankey, the Christmas Poo, in its holiday episodes?",
+      correct: "South Park",
+      wrong: ["Family Guy", "The Simpsons", "Futurama", "Beavis and Butt-Head"] },
+    { question: "In 1847, Hans Greiner began producing glass versions of what traditional holiday decorations?",
+      correct: "Ornaments",
+      wrong: ["Candy canes", "Wreaths", "Tinsel", "Stockings"] },
+    { question: "Starting in 1933, what department store published a “Wish Book” catalog each holiday season?",
+      correct: "Sears",
+      wrong: ["Montgomery Ward", "Macy’s", "JCPenney", "Woolworth’s"] },
+    { question: "What Christmas song, recorded in 1994, surpassed 2 billion streams on Spotify by 2024?",
+      correct: "All I Want For Christmas Is You",
+      wrong: ["Last Christmas", "Jingle Bell Rock", "White Christmas", "Santa Baby"] },
+    { question: "What hit 1984 movie begins with a father buying a mysterious creature as a Christmas present for his son?",
+      correct: "Gremlins",
+      wrong: ["Ghostbusters", "Back to the Future", "Labyrinth", "The NeverEnding Story"] },
+    { question: "True or False: The mother in “A Christmas Story” was correct that falling icicles can seriously hurt people.",
+      correct: "True",
+      wrong: ["False", "Only in very cold climates", "Only if they are very large", "Only during spring thaw"] },
+    { question: "What Bing Crosby song is the best-selling single of all time?",
+      correct: "White Christmas",
+      wrong: ["Silent Night", "Rudolph the Red-Nosed Reindeer", "Jingle Bells", "Winter Wonderland"] },
+    { question: "In the early 1800s, the first gingerbread houses were reportedly inspired by what famous fairy tale?",
+      correct: "Hansel and Gretel",
+      wrong: ["Little Red Riding Hood", "Cinderella", "Rapunzel", "Jack and the Beanstalk"] },
+    { question: "“Miracle on 34th Street” centers on what real-life department store?",
+      correct: "Macy’s",
+      wrong: ["Gimbels", "Bloomingdale’s", "Saks Fifth Avenue", "Woolworth’s"] },
+    { question: "What traditional Christmas decoration is actually a parasitic plant?",
+      correct: "Mistletoe",
+      wrong: ["Holly", "Poinsettia", "Ivy", "Christmas cactus"] },
+    { question: "In “The Muppet Christmas Carol,” who played Scrooge (hint: it wasn’t a muppet)?",
+      correct: "Michael Caine",
+      wrong: ["Patrick Stewart", "Ian McKellen", "George C. Scott", "Tim Curry"] },
+    { question: "What beverage company has been using Santa Claus in its advertising since 1931?",
+      correct: "Coca-Cola",
+      wrong: ["Pepsi", "Dr Pepper", "7-Up", "RC Cola"] },
+    { question: "What 2003 film follows a hard-living mall Santa?",
+      correct: "Bad Santa",
+      wrong: ["The Santa Clause", "Elf", "Fred Claus", "Bad Santa 2"] },
+    { question: "In \"The Twelve Days of Christmas,\" what are there eleven of?",
+      correct: "Pipers piping",
+      wrong: ["Lords a-leaping", "Ladies dancing", "Drummers drumming", "Maids a-milking"] },
+    { question: "In “The Chipmunk Song,” what do the chipmunks want for Christmas besides a plane that loops the loop?",
+      correct: "A hula hoop",
+      wrong: ["A pony", "A yo-yo", "A kite", "A train set"] },
+    { question: "Whose recording of “Rudolph the Red-Nosed Reindeer” topped the U.S. charts in 1949?",
+      correct: "Gene Autry",
+      wrong: ["Bing Crosby", "Frank Sinatra", "Perry Como", "Nat King Cole"] },
+    { question: "“Mele Kalikimaka” means “Merry Christmas” in what language?",
+      correct: "Hawaiian",
+      wrong: ["Spanish", "Filipino (Tagalog)", "Maori", "Swahili"] },
+    { question: "A booklet published by Montgomery Ward in 1939 introduced what famous Christmas character?",
+      correct: "Rudolph the Red-Nosed Reindeer",
+      wrong: ["Frosty the Snowman", "Jack Frost", "The Little Drummer Boy", "Ebenezer Scrooge"] },
+    { question: "In 1996, what toy with origins on *Sesame Street* became a sensational Christmas must-have?",
+      correct: "Tickle Me Elmo",
+      wrong: ["Furby", "Beanie Babies", "Tamagotchi", "Cabbage Patch Kids"] },
+    { question: "How much weight does the average American actually gain over the holidays?",
+      correct: "About 1 pound",
+      wrong: ["None at all", "About 3 pounds", "About 5 pounds", "Over 8 pounds"] },
+    { question: "What major event of the American Revolution took place on Christmas night in 1776?",
+      correct: "Washington’s crossing of the Delaware",
+      wrong: ["The Boston Tea Party", "The signing of the Declaration of Independence", "The winter at Valley Forge", "The Battle of Yorktown"] },
+    { question: "What wintery word comes from the Latin for “sun stands still”?",
+      correct: "Solstice",
+      wrong: ["Equinox", "Aurora", "Horizon", "Aphelion"] },
+    { question: "True or False: “Kris Kringle” is the German name for Santa Claus.",
+      correct: "False (it comes from the German for Christ Child, not Santa)",
+      wrong: ["True", "It’s the Dutch name for Santa", "It was popularized by a 1947 movie", "It was invented by a department store"] },
+    { question: "What little green toys, first made in 1938, became classic stocking stuffers for boys during WWII?",
+      correct: "Plastic Army Men",
+      wrong: ["Marbles", "Lincoln Logs", "Matchbox cars", "Yo-yos"] },
+    { question: "What organization runs the “Operation Santa” program matching children’s letters to volunteer gift-givers?",
+      correct: "The United States Postal Service",
+      wrong: ["Salvation Army", "Make-A-Wish Foundation", "Boy Scouts of America", "United Way"] },
+    { question: "According to Guinness World Records, the tallest cut Christmas tree was about how many feet tall?",
+      correct: "200 feet",
+      wrong: ["100 feet", "300 feet", "400 feet", "250 feet"] },
+    { question: "In *Home Alone*, what is the name of the town where the McCallister family lives?",
+      correct: "Winnetka, Illinois",
+      wrong: ["Chicago, Illinois", "New York, New York", "Boston, Massachusetts", "Cleveland, Ohio"] },
+    { question: "How many ghosts visit Ebenezer Scrooge in *A Christmas Carol*?",
+      correct: "4",
+      wrong: ["1", "2", "3", "5"] },
+    { question: "What is the name of the Grinch’s dog in *How the Grinch Stole Christmas*?",
+      correct: "Max",
+      wrong: ["Sam", "Buddy", "Spike", "Rover"] },
+    { question: "In *It’s a Wonderful Life*, what is the name of George Bailey’s guardian angel?",
+      correct: "Clarence",
+      wrong: ["Gabriel", "Michael", "Harold", "George"] },
+    { question: "What is the name of the Abominable Snowman in the *Rudolph the Red-Nosed Reindeer* special?",
+      correct: "The Bumble",
+      wrong: ["The Yeti", "Bigfoot", "Snowball", "Mr. Snow"] },
+    { question: "Which actor voices the Grinch in the 2018 animated film *The Grinch*?",
+      correct: "Benedict Cumberbatch",
+      wrong: ["Jim Carrey", "Pharrell Williams", "Bill Hader", "Will Ferrell"] },
+    { question: "In *A Christmas Story*, what does the Old Man excitedly call the leg lamp he won?",
+      correct: "A \"Major Award\"",
+      wrong: ["Grand Prize", "Blue Ribbon", "Top Honor", "Prestigious Award"] },
+    { question: "What is the name of Jack Skellington’s love interest in *The Nightmare Before Christmas*?",
+      correct: "Sally",
+      wrong: ["Lucy", "Emily", "Jill", "Lydia"] },
+    { question: "In which country is the Christmas gift-bringer known as Joulupukki?",
+      correct: "Finland",
+      wrong: ["Sweden", "Norway", "Iceland", "Estonia"] },
+    { question: "What do the red stripes on a candy cane traditionally symbolize?",
+      correct: "The blood of Christ",
+      wrong: ["Santa’s red suit", "No special meaning", "The love of Christ", "The joy of the season"] },
+    { question: "Which U.S. state was the first to recognize Christmas as a legal holiday?",
+      correct: "Alabama",
+      wrong: ["New York", "Massachusetts", "Virginia", "Pennsylvania"] },
+    { question: "In what century did the first recorded use of a Christmas tree take place?",
+      correct: "16th century",
+      wrong: ["18th century", "17th century", "19th century", "12th century"] },
+    { question: "In Sweden, a giant straw Christmas goat is built each year in Gävle. What often happens to it?",
+      correct: "It gets burned down by vandals",
+      wrong: ["It stays up all year", "It collapses under snow", "It is stolen by pranksters", "It is moved to the capital"] },
+    { question: "What is the four-week period before Christmas in the Christian calendar called?",
+      correct: "Advent",
+      wrong: ["Lent", "Epiphany", "Yuletide", "Christmastide"] },
+    { question: "After whom is the poinsettia (the Christmas plant) named?",
+      correct: "Joel Roberts Poinsett",
+      wrong: ["William Poinsett", "Samuel Pickens", "John Holly", "Henry Cole"] },
+    { question: "In the 2003 movie *Elf*, what is the nickname of the head elf who raised Buddy?",
+      correct: "Papa Elf",
+      wrong: ["Elmer the Elf", "Buddy Sr.", "Chief Elf Charlie", "Santa Jr."] },
+    { question: "What do children usually leave out for Santa on Christmas Eve?",
+      correct: "Cookies and milk",
+      wrong: ["Carrots for the reindeer", "Mince pie and sherry", "A glass of wine", "Stockings filled with candy"] },
+    { question: "In the Rudolph special, prospector Yukon Cornelius is constantly searching for what?",
+      correct: "Silver and gold",
+      wrong: ["Gold", "Peppermint", "Oil", "Treasure"] },
+    { question: "Which two spices are the primary ingredients in gingerbread?",
+      correct: "Ginger and cinnamon",
+      wrong: ["Cinnamon and nutmeg", "Nutmeg and cloves", "Allspice and cinnamon", "Ginger and vanilla"] },
+    { question: "What meat is the traditional centerpiece of a British Christmas dinner?",
+      correct: "Turkey",
+      wrong: ["Goose", "Ham", "Roast beef", "Duck"] },
+    { question: "What is the German Christmas cake – a dense, spiced fruit bread – called?",
+      correct: "Stollen",
+      wrong: ["Panettone", "Fruitcake", "Lebkuchen", "Strudel"] },
+    { question: "In *A Christmas Story*, what did the Parkers eat for Christmas dinner after their turkey was ruined?",
+      correct: "Roast duck (at a Chinese restaurant)",
+      wrong: ["Christmas ham", "Takeout pizza", "Chinese noodles", "Fried chicken"] },
+    { question: "What do the French call their traditional Yule log cake dessert?",
+      correct: "Bûche de Noël",
+      wrong: ["Croquembouche", "Galette des Rois", "Crème brûlée", "Tarte Tatin"] },
+    { question: "What flavor are classic candy canes?",
+      correct: "Peppermint",
+      wrong: ["Spearmint", "Wintergreen", "Cinnamon", "Cherry"] },
+    { question: "What is the main alcoholic ingredient in the Scandinavian mulled wine known as glögg?",
+      correct: "Red wine",
+      wrong: ["Vodka", "Beer", "Whiskey", "Cider"] },
+    { question: "In which town was Jesus born?",
+      correct: "Bethlehem",
+      wrong: ["Nazareth", "Jerusalem", "Galilee", "Capernaum"] },
+    { question: "According to the Bible, who visited the baby Jesus bearing gifts?",
+      correct: "The Magi (Wise Men)",
+      wrong: ["Shepherds", "Angels", "The Little Drummer Boy", "The innkeeper"] },
+    { question: "Who was the ruler of Judea at the time Jesus was born?",
+      correct: "King Herod",
+      wrong: ["Caesar Augustus", "Pontius Pilate", "King David", "Julius Caesar"] },
+    { question: "Where was baby Jesus laid after he was born, according to the Nativity story?",
+      correct: "In a manger",
+      wrong: ["In a basket", "On the ground", "In a cradle", "On Mary’s lap"] },
+    { question: "Which author wrote *A Christmas Carol*?",
+      correct: "Charles Dickens",
+      wrong: ["Mark Twain", "Victor Hugo", "Arthur Conan Doyle", "Thomas Hardy"] },
+    { question: "Which ancient Roman festival is often seen as a precursor to Christmas?",
+      correct: "Saturnalia",
+      wrong: ["Sol Invictus", "Lupercalia", "Bacchanalia", "Festivus"] },
+    { question: "Which country gifts a Christmas tree to London’s Trafalgar Square every year?",
+      correct: "Norway",
+      wrong: ["Sweden", "Germany", "Canada", "United States"] },
+    { question: "Which U.S. President was the first to have a Christmas tree in the White House?",
+      correct: "Franklin Pierce",
+      wrong: ["Abraham Lincoln", "Ulysses S. Grant", "Theodore Roosevelt", "James Madison"] },
+    { question: "In *Home Alone*, what is the name of the elderly neighbor that Kevin befriends?",
+      correct: "Old Man Marley",
+      wrong: ["Old Man Potter", "Marv Merchants", "The Shovel Slayer", "Mr. Grinch"] },
+    { question: "In the Harry Potter series, what Christmas present does Harry receive from Sirius Black in *Goblet of Fire*?",
+      correct: "A Firebolt broomstick",
+      wrong: ["An Invisibility Cloak", "The Marauder’s Map", "A Nimbus 2000 broom", "A magical wand"] },
+    { question: "Which two U.S. states have towns named “Santa Claus”?",
+      correct: "Indiana and Georgia",
+      wrong: ["Alaska and Arizona", "Maryland and Ohio", "Texas and California", "Florida and Alaska"] },
+    { question: "Which famous scientist was born on Christmas Day, 1642?",
+      correct: "Sir Isaac Newton",
+      wrong: ["Galileo Galilei", "Leonardo da Vinci", "Charles Darwin", "Benjamin Franklin"] },
+    { question: "In the *Friends* episode “The One with the Holiday Armadillo,” what costume does Ross wear?",
+      correct: "The Holiday Armadillo",
+      wrong: ["An elf", "A reindeer", "A snowman", "The Grinch"] },
+    { question: "In *Love Actually*, how does Mark silently confess his love to Juliet on Christmas Eve?",
+      correct: "By holding up large cue cards with messages",
+      wrong: ["By singing a carol to her", "By writing her a letter", "By showing her a video he made", "By giving her a ring"] },
+    { question: "What gift does Ralphie want more than anything in *A Christmas Story*?",
+      correct: "A Red Ryder BB gun",
+      wrong: ["A pair of ice skates", "A new bike", "A train set", "A puppy"] },
+    { question: "In “The Twelve Days of Christmas,” what is given on the first day?",
+      correct: "A partridge in a pear tree",
+      wrong: ["Two turtle doves", "Five golden rings", "A jack-in-the-box", "A partridge in an apple tree"] },
+    { question: "In *National Lampoon’s Christmas Vacation*, what does Clark Griswold use to grease his sled?",
+      correct: "A non-toxic silicone-based kitchen lubricant",
+      wrong: ["WD-40", "Crisco shortening", "Cooking oil", "Spray paint"] },
+    { question: "Which two of Santa’s reindeer are named after weather phenomena?",
+      correct: "Donner and Blitzen (Thunder and Lightning)",
+      wrong: ["Comet and Cupid", "Dasher and Dancer", "Prancer and Vixen", "Rudolph and Vixen"] },
+    { question: "In what year was the first Christmas card commissioned (by Sir Henry Cole)?",
+      correct: "1843",
+      wrong: ["1830", "1860", "1880", "1910"] }
   ];
 
-  for (const item of CLUE_OBJECTS){
-    const distractors = pick4Distinct(allAnswers.filter(a=>a!==item.answer).concat([
-      "Snow globe","Gingerbread house","Garland","Icicle ornament","Peppermint bark","Candy cane"
-    ]));
-    out.push(Q(item.id, item.clue, item.answer, distractors, {category:item.category, template:"object_clue"}));
+  var scriptURL = "https://script.google.com/macros/s/AKfycby7ZsgfPb-dw1oxroQT5e3WyhDFspOP3yalxywQReOviGqGpx_slZ07LmnnRgnUJ-ikxw/exec";
+
+  // Game state variables
+  var gameMode = "solo";
+  var totalQuestions = 0;
+  var currentIndex = 0;
+  var score = 0;
+  var teamScores = [];
+  var shuffledQuestions = [];
+  var currentQuestion = null;
+  var answered = false;
+
+  // UI element references
+  var startScreen = document.getElementById("start-screen");
+  var questionScreen = document.getElementById("question-screen");
+  var scoreDisplay = document.getElementById("score-display");
+  var progressDisplay = document.getElementById("progress");
+  var questionText = document.getElementById("question-text");
+  var optionsList = document.getElementById("options");
+  var feedbackEl = document.getElementById("feedback");
+  var revealButton = document.getElementById("reveal-button");
+  var showAnswerButton = document.getElementById("show-answer-button");
+  var nextButton = document.getElementById("next-button");
+  var scoreboardDiv = document.getElementById("group-scoreboard");
+  var scoreTable = document.getElementById("score-table");
+  var resultScreen = document.getElementById("result-screen");
+  var resultText = document.getElementById("result-text");
+  var restartButton = document.getElementById("restart-button");
+  var modeRadios = document.getElementsByName("mode");
+  var teamSelectDiv = document.getElementById("team-select");
+  var numTeamsSelect = document.getElementById("num-teams");
+  var numQuestionsSelect = document.getElementById("num-questions");
+
+  // Event Listeners
+  document.getElementById("start-button").addEventListener("click", startGame);
+  revealButton.addEventListener("click", revealOptions);
+  showAnswerButton.addEventListener("click", revealCorrectAnswer);
+  nextButton.addEventListener("click", nextQuestion);
+  restartButton.addEventListener("click", function() {
+    window.location.reload();
+  });
+  // Toggle team number selection when mode changes
+  for(var i=0; i<modeRadios.length; i++) {
+    modeRadios[i].addEventListener("change", function() {
+      if(this.value === "group") {
+        teamSelectDiv.style.display = "inline-block";
+      } else {
+        teamSelectDiv.style.display = "none";
+      }
+    });
   }
 
-  for (const t of TOY_CLUES){
-    const distractors = pick4Distinct(allAnswers.filter(a=>a!==t.answer).concat([
-      "Goofy Gus","Wiggling Wralph","Crazy Cookie Monster","Laughing Larry","Robot Raccoon"
-    ]));
-    out.push(Q(t.id, t.clue, t.answer, distractors, {category:"Famous Gifts", template:"toy_clue"}));
-  }
+  function startGame() {
+    // Determine selected mode and number of questions
+    var modeValue = document.querySelector('input[name="mode"]:checked').value;
+    gameMode = modeValue;
+    totalQuestions = parseInt(numQuestionsSelect.value);
+    currentIndex = 0;
+    score = 0;
+    teamScores = [];
 
-  return out;
-}
-
-/* ============================
-   Extra solid Q/A (no lyrics, no word-search)
-   ============================ */
-const EXTRA = [
-  Q("ex_001", "What are two popular nicknames for Santa Claus?", "Kris Kringle and Saint Nick",
-    ["Father Frost and Snow King","Old Man Winter and Jack Frost","Captain Cheer and Gift Guy","North Nick and Mr. Jolly"], {category:"Santa & Reindeer", template:"extra"}),
-
-  Q("ex_002", "What are the three gifts traditionally brought by the Wise Men?", "Gold, frankincense, and myrrh",
-    ["Gold, silver, and bronze","Bread, milk, and honey","Perfume, silk, and spices","Toys, candy, and cookies"], {category:"Christmas Story", template:"extra"}),
-
-  Q("ex_003", "What guided the Wise Men to the newborn Jesus in the Christmas story?", "A star",
-    ["A rainbow","A map from Caesar","A dove","A lighthouse"], {category:"Christmas Story", template:"extra"}),
-
-  Q("ex_004", "Where did Mary and Joseph stay the night Jesus was born (according to the story)?", "In a stable (because the inn was full)",
-    ["In a palace","In a school","In a temple","In a boat"], {category:"Christmas Story", template:"extra"}),
-
-  Q("ex_005", "What is the name of the green character who tries to ruin Christmas for a town?", "The Grinch",
-    ["Frosty","Buddy","Scrooge","Jack Frost"], {category:"Movies", template:"extra"}),
-
-  Q("ex_006", "What do people traditionally hang by the fireplace to fill with small gifts?", "Stocking",
-    ["Backpack","Boot","Pillowcase","Hat"], {category:"Traditions", template:"extra"}),
-
-  Q("ex_007", "What is a common thing people do when they find themselves under mistletoe?", "Kiss",
-    ["Sing","Dance","Run","Hide"], {category:"Traditions", template:"extra"}),
-
-  Q("ex_008", "In A Christmas Carol, what famous phrase is Scrooge known for saying?", "Bah humbug!",
-    ["Ho ho ho!","Merry and bright!","Jingle all the way!","Happy holidays!"], {category:"Movies", template:"extra"}),
-
-  Q("ex_009", "Which movie is often listed as one of the highest-grossing Christmas movies of all time?", "Home Alone",
-    ["Klaus","Prancer","Deck the Halls","Arthur Christmas"], {category:"Movies", template:"extra"}),
-
-  Q("ex_010", "What is a common top decoration for a Christmas tree?", "An angel",
-    ["A pumpkin","A shoe","A spoon","A baseball"], {category:"Traditions", template:"extra"})
-];
-
-/* ============================
-   Build the final bank
-   ============================ */
-function buildBank(){
-  const bank = [];
-  bank.push(...PREMADE);
-  bank.push(...buildMovieDescriptionQuestions());
-  bank.push(...buildClueQuestions());
-  bank.push(...MEDIA_QUESTIONS);
-  bank.push(...EXTRA);
-
-  // Dedup by id
-  const seen = new Set();
-  const out = [];
-  for (const q of bank){
-    if (!seen.has(q.id)){
-      seen.add(q.id);
-      out.push(q);
+    // Shuffle question pool and pick the first N questions
+    shuffledQuestions = questions.slice();  // copy array
+    shuffleArray(shuffledQuestions);
+    // If the pool has more than needed, trim it
+    if(shuffledQuestions.length > totalQuestions) {
+      shuffledQuestions = shuffledQuestions.slice(0, totalQuestions);
     }
+
+    // Initialize scoreboard for group mode
+    if(gameMode === "group") {
+      var teamCount = parseInt(numTeamsSelect.value);
+      teamScores = Array(teamCount).fill(0);
+      updateScoreboardDisplay();
+      scoreboardDiv.style.display = "block";
+      scoreDisplay.style.display = "none"; // no single score display
+    } else {
+      scoreboardDiv.style.display = "none";
+      scoreDisplay.style.display = "block";
+    }
+
+    // Hide start screen, show question screen
+    startScreen.style.display = "none";
+    questionScreen.style.display = "block";
+
+    // Display the first question
+    displayQuestion();
   }
 
-  return out;
-}
+  function displayQuestion() {
+    // Reset feedback and controls
+    feedbackEl.textContent = "";
+    answered = false;
+    revealButton.style.display = "none";
+    showAnswerButton.style.display = "none";
+    nextButton.style.display = "none";
 
-let QUESTION_BANK = buildBank();
-console.log("Question bank size:", QUESTION_BANK.length);
+    // Get current question object
+    currentQuestion = shuffledQuestions[currentIndex];
+    // Update question text and progress
+    progressDisplay.textContent = "Question " + (currentIndex + 1) + " of " + totalQuestions;
+    questionText.textContent = currentQuestion.question;
+    // Clear old options
+    optionsList.innerHTML = "";
 
-/* ============================
-   Balanced quiz builder (reduces repeats)
-   - category rotation
-   - template caps
-   - no duplicate IDs in a game
-   ============================ */
-function buildQuizQuestions(){
-  const pool = [...QUESTION_BANK];
-  shuffle(pool);
-
-  // Bucket by category
-  const buckets = new Map();
-  for (const q of pool){
-    const cat = q.category || "General";
-    if (!buckets.has(cat)) buckets.set(cat, []);
-    buckets.get(cat).push(q);
-  }
-  for (const [_, arr] of buckets) shuffle(arr);
-
-  const categoryOrder = [
-    "Movies","Songs","Traditions","Food & Treats","Santa & Reindeer","Christmas Story",
-    "History","World Traditions","Folklore","Languages","Famous Gifts","Audio","Images","General"
-  ];
-
-  const chosen = [];
-  const usedIds = new Set();
-  const templateCount = new Map();
-
-  function canTake(q){
-    if (usedIds.has(q.id)) return false;
-    const t = q.template || "misc";
-    const count = templateCount.get(t) || 0;
-    return count < 7; // cap per template
-  }
-
-  let guard = 0;
-  while (chosen.length < 30 && guard < 5000){
-    guard++;
-    const cat = categoryOrder[chosen.length % categoryOrder.length];
-    const arr = buckets.get(cat) || [];
-    let picked = null;
-
-    while (arr.length){
-      const q = arr.pop();
-      if (canTake(q)){
-        picked = q;
-        break;
+    // If solo mode: immediately show multiple-choice options as clickable
+    if(gameMode === "solo") {
+      // Combine correct and wrong options and shuffle them
+      var choices = [currentQuestion.correct].concat(currentQuestion.wrong);
+      shuffleArray(choices);
+      // Create list items for each choice
+      choices.forEach(function(choice) {
+        var li = document.createElement("li");
+        li.textContent = choice;
+        li.addEventListener("click", function() { handleAnswer(choice, li); });
+        optionsList.appendChild(li);
+      });
+      // Display score
+      scoreDisplay.textContent = "Score: " + score;
+    } else if(gameMode === "group") {
+      // Group mode: initially hide options, show reveal button
+      revealButton.style.display = "inline-block";
+      // Prepare the options in the list but keep them hidden for now
+      var allOptions = [currentQuestion.correct].concat(currentQuestion.wrong);
+      shuffleArray(allOptions);
+      allOptions.forEach(function(choice) {
+        var li = document.createElement("li");
+        li.textContent = choice;
+        // Disable pointer events because in group mode, selection is manual
+        li.classList.add("disabled");
+        optionsList.appendChild(li);
+      });
+      // Initially hide the options (set list items visibility to hidden)
+      for(var i=0; i<optionsList.children.length; i++) {
+        optionsList.children[i].style.display = "none";
       }
     }
+  }
 
-    if (!picked){
-      const remaining = pool.filter(canTake);
-      if (!remaining.length) break;
-      picked = remaining[Math.floor(Math.random()*remaining.length)];
+  function handleAnswer(selectedAnswer, listItemElement) {
+    if(answered) return; // prevent multiple clicks
+    answered = true;
+    // Determine if correct
+    var isCorrect = (selectedAnswer === currentQuestion.correct);
+    // Update score
+    if(isCorrect) {
+      score += 2;
+      feedbackEl.textContent = "Correct! +2 points";
+    } else {
+      score -= 1;
+      feedbackEl.textContent = "Incorrect! -1 point";
     }
-
-    chosen.push(picked);
-    usedIds.add(picked.id);
-    const t = picked.template || "misc";
-    templateCount.set(t, (templateCount.get(t)||0) + 1);
+    // Highlight answers
+    // Add class to correct answer option
+    var listItems = optionsList.children;
+    for(var i=0; i<listItems.length; i++) {
+      var li = listItems[i];
+      if(li.textContent === currentQuestion.correct) {
+        li.classList.add("correct");
+      }
+      // If this li is the one user clicked and it's wrong, mark wrong
+      if(li === listItemElement && !isCorrect) {
+        li.classList.add("wrong");
+      }
+      // Disable further clicking on all options
+      li.classList.add("disabled");
+    }
+    // Update score display (solo mode)
+    scoreDisplay.textContent = "Score: " + score;
+    // Proceed to next after 3 seconds
+    setTimeout(function() {
+      nextQuestion();
+    }, 3000);
   }
 
-  // tie-break buffer
-  const extras = pool.filter(q => !usedIds.has(q.id));
-  shuffle(extras);
-  return chosen.concat(extras.slice(0, 50));
-}
-
-/* ============================
-   Game Logic / UI
-   ============================ */
-const $ = (sel)=>document.querySelector(sel);
-
-const screenStart = $("#screenStart");
-const screenQuiz = $("#screenQuiz");
-const screenEnd = $("#screenEnd");
-
-const pillMode = $("#pillMode");
-const pillProgress = $("#pillProgress");
-const pillScore = $("#pillScore");
-const pillCategory = $("#pillCategory");
-
-const scoreboardWrap = $("#scoreboardWrap");
-const scoreboard = $("#scoreboard");
-
-const questionText = $("#questionText");
-const mediaEl = $("#media");
-const choicesEl = $("#choices");
-const feedbackEl = $("#feedback");
-
-const groupControls = $("#groupControls");
-const btnReveal = $("#btnReveal");
-const btnPass = $("#btnPass");
-const btnNext = $("#btnNext");
-const buzzButtons = $("#buzzButtons");
-const buzzStatus = $("#buzzStatus");
-const btnClearBuzz = $("#btnClearBuzz");
-const scoreHint = $("#scoreHint");
-
-const btnRestart = $("#btnRestart");
-const btnPlayAgain = $("#btnPlayAgain");
-const endTitle = $("#endTitle");
-const soloEndBlock = $("#soloEndBlock");
-const groupEndBlock = $("#groupEndBlock");
-const endScore = $("#endScore");
-const nameInput = $("#nameInput");
-const btnSubmit = $("#btnSubmit");
-const submitStatus = $("#submitStatus");
-const winnerText = $("#winnerText");
-const finalScores = $("#finalScores");
-
-$("#btnSolo").addEventListener("click", ()=>startGame("solo", 1));
-$("#btnGroup2").addEventListener("click", ()=>startGame("group", 2));
-$("#btnGroup3").addEventListener("click", ()=>startGame("group", 3));
-$("#btnGroup4").addEventListener("click", ()=>startGame("group", 4));
-btnPlayAgain.addEventListener("click", ()=>goToStart());
-btnRestart.addEventListener("click", ()=>goToStart());
-
-let mode = "solo";
-let teamCount = 0;
-let teamScores = [];
-let teamNames = [];
-let soloScore = 0;
-
-let gameQuestions = [];
-let qIndex = 0;
-let isTieBreaker = false;
-
-let choicesRevealed = false;
-let buzzedTeam = null;
-let buzzWasBeforeReveal = false;
-
-let answeredLocked = false;
-
-function goToStart(){
-  stopAnyAudio();
-  screenQuiz.style.display = "none";
-  screenEnd.style.display = "none";
-  screenStart.style.display = "block";
-  resetState();
-}
-
-function resetState(){
-  mode="solo"; teamCount=0;
-  teamScores=[]; teamNames=[];
-  soloScore=0;
-  gameQuestions=[]; qIndex=0; isTieBreaker=false;
-  choicesRevealed=false; buzzedTeam=null; buzzWasBeforeReveal=false;
-  answeredLocked=false;
-
-  feedbackEl.className="feedback";
-  feedbackEl.textContent="";
-  feedbackEl.style.display="none";
-  scoreHint.style.display="none";
-  scoreHint.textContent="";
-  submitStatus.style.display="none";
-  nameInput.value="";
-}
-
-function startGame(newMode, teams){
-  resetState();
-  mode=newMode;
-  teamCount=teams;
-
-  // Balanced pick
-  gameQuestions = buildQuizQuestions();
-  qIndex = 0;
-
-  screenStart.style.display="none";
-  screenEnd.style.display="none";
-  screenQuiz.style.display="block";
-
-  pillMode.textContent = `Mode: ${mode==="solo" ? "Solo" : `Group (${teamCount} Teams)`}`;
-  pillScore.style.display = (mode==="solo") ? "inline-flex" : "none";
-
-  groupControls.style.display = (mode==="group") ? "grid" : "none";
-  scoreboardWrap.style.display = (mode==="group") ? "block" : "none";
-
-  if (mode==="group"){
-    teamScores = Array(teamCount).fill(0);
-    teamNames = Array.from({length:teamCount}, (_,i)=>`Team ${i+1}`);
-    renderScoreboard();
-    buildBuzzButtons();
+  function revealOptions() {
+    // Show the multiple-choice options to the screen
+    for(var i=0; i<optionsList.children.length; i++) {
+      optionsList.children[i].style.display = "block";
+    }
+    revealButton.style.display = "none";
+    showAnswerButton.style.display = "inline-block";
+    nextButton.style.display = "inline-block";
   }
 
-  renderQuestion();
-}
-
-function renderScoreboard(){
-  scoreboard.innerHTML="";
-  for (let i=0;i<teamCount;i++){
-    const card=document.createElement("div");
-    card.className="teamCard";
-
-    const name=document.createElement("div");
-    name.className="teamName";
-    name.textContent=teamNames[i];
-    name.setAttribute("contenteditable","false");
-    name.addEventListener("click", ()=>{name.setAttribute("contenteditable","true"); name.focus();});
-    name.addEventListener("blur", ()=>{
-      name.setAttribute("contenteditable","false");
-      const txt = (name.textContent||"").trim() || `Team ${i+1}`;
-      teamNames[i]=txt;
-      name.textContent=txt;
-      buildBuzzButtons();
-    });
-
-    const score=document.createElement("div");
-    score.className="teamScore";
-    score.id=`teamScore_${i}`;
-    score.textContent=String(teamScores[i]);
-
-    const btns=document.createElement("div");
-    btns.className="scoreBtns";
-
-    const mk=(label,delta,cls)=> {
-      const b=document.createElement("button");
-      b.className=cls || "btn small";
-      b.textContent=label;
-      b.addEventListener("click", ()=>adjustTeamScore(i,delta));
-      return b;
-    };
-
-    btns.appendChild(mk("+4", +4, "btn small gold"));
-    btns.appendChild(mk("+2", +2, "btn small green"));
-    btns.appendChild(mk("+1", +1, "btn small"));
-    btns.appendChild(mk("-1", -1, "btn small red"));
-    btns.appendChild(mk("-2", -2, "btn small red"));
-
-    const mini=document.createElement("div");
-    mini.className="mini";
-    mini.textContent="Edit name • Adjust score";
-
-    card.appendChild(name);
-    card.appendChild(score);
-    card.appendChild(btns);
-    card.appendChild(mini);
-    scoreboard.appendChild(card);
-  }
-}
-
-function adjustTeamScore(teamIdx,delta){
-  teamScores[teamIdx]+=delta; // allow negative
-  const el=document.getElementById(`teamScore_${teamIdx}`);
-  if (el) el.textContent=String(teamScores[teamIdx]);
-}
-
-function buildBuzzButtons(){
-  buzzButtons.innerHTML="";
-  for (let i=0;i<teamCount;i++){
-    const b=document.createElement("button");
-    b.className="btn small";
-    b.textContent=`Buzz: ${teamNames[i]}`;
-    b.addEventListener("click", ()=>{
-      if (answeredLocked) return;
-      buzzedTeam=i;
-      buzzWasBeforeReveal=!choicesRevealed;
-      buzzStatus.style.display="inline-flex";
-      buzzStatus.textContent = `${teamNames[i]} buzzed ${buzzWasBeforeReveal ? "(early = double eligible)" : ""}`;
-      btnClearBuzz.style.display="inline-flex";
-      scoreHint.style.display="none";
-    });
-    buzzButtons.appendChild(b);
-  }
-  btnClearBuzz.style.display = (buzzedTeam!==null) ? "inline-flex" : "none";
-  btnClearBuzz.onclick=()=>{
-    buzzedTeam=null; buzzWasBeforeReveal=false;
-    buzzStatus.style.display="none";
-    btnClearBuzz.style.display="none";
-  };
-}
-
-btnReveal.addEventListener("click", ()=>{
-  if (answeredLocked) return;
-  choicesRevealed = !choicesRevealed;
-  if (choicesRevealed){
-    btnReveal.textContent="Hide Choices";
-    choicesEl.style.display="grid";
-  } else {
-    btnReveal.textContent="Reveal Choices";
-    choicesEl.style.display="none";
-  }
-});
-
-btnPass.addEventListener("click", ()=>{
-  if (answeredLocked) return;
-  showFeedback("Pass. Nobody answered. Moving on.", "bad");
-  btnNext.disabled=false;
-});
-
-btnNext.addEventListener("click", ()=>nextQuestion());
-
-function renderQuestion(){
-  answeredLocked=false;
-  btnNext.disabled=true;
-  scoreHint.style.display="none";
-  scoreHint.textContent="";
-
-  feedbackEl.className="feedback";
-  feedbackEl.textContent="";
-  feedbackEl.style.display="none";
-
-  stopAnyAudio();
-
-  const mainTotal=30;
-  pillProgress.textContent = `Q ${Math.min(qIndex+1,mainTotal)} / ${mainTotal}` + (isTieBreaker ? " (Tie-breaker)" : "");
-  pillScore.textContent = `Score: ${soloScore}`;
-
-  const q=gameQuestions[qIndex];
-  pillCategory.textContent = `Category: ${q.category}`;
-  questionText.textContent = q.prompt;
-
-  // media
-  mediaEl.innerHTML="";
-  if (q.type==="image" && q.mediaSrc){
-    const img=document.createElement("img");
-    img.src=q.mediaSrc;
-    img.alt="Question image";
-    mediaEl.appendChild(img);
-  } else if (q.type==="audio" && q.mediaSrc){
-    const a=document.createElement("audio");
-    a.controls=true;
-    a.preload="none";
-    a.src=q.mediaSrc;
-    mediaEl.appendChild(a);
+  function revealCorrectAnswer() {
+    // Highlight the correct answer for group mode
+    var listItems = optionsList.children;
+    for(var i=0; i<listItems.length; i++) {
+      var li = listItems[i];
+      if(li.textContent === currentQuestion.correct) {
+        li.classList.add("correct");
+      }
+    }
+    showAnswerButton.style.display = "none";
   }
 
-  // choices
-  const options = buildFiveChoices(q);
-  renderChoices(options, q.answer);
-
-  if (mode==="solo"){
-    choicesEl.style.display="grid";
-  } else {
-    choicesRevealed=false;
-    btnReveal.textContent="Reveal Choices";
-    choicesEl.style.display="none";
-
-    buzzedTeam=null;
-    buzzWasBeforeReveal=false;
-    buzzStatus.style.display="none";
-    btnClearBuzz.style.display="none";
-  }
-}
-
-function buildFiveChoices(q){
-  const set=new Set([q.answer]);
-  const d=[...q.distractors];
-  shuffle(d);
-  for (const x of d){
-    if (set.size>=5) break;
-    set.add(x);
-  }
-  if (set.size<5){
-    const global = QUESTION_BANK.map(qq=>qq.answer).filter(a=>a && a!==q.answer);
-    shuffle(global);
-    for (const g of global){
-      if (set.size>=5) break;
-      set.add(g);
+  function nextQuestion() {
+    // If in group mode, no automatic scoring changes here; host adjusts manually via scoreboard.
+    // Move to next question or end game if last question reached
+    currentIndex++;
+    if(currentIndex < totalQuestions) {
+      displayQuestion();
+    } else {
+      // All planned questions finished
+      if(gameMode === "group") {
+        // Check for tie
+        var topScore = Math.max.apply(null, teamScores);
+        // Get how many teams have this topScore
+        var topTeams = teamScores.filter(s => s === topScore).length;
+        if(topTeams > 1) {
+          // Tie-breaker needed
+          feedbackEl.textContent = "Tie for first place! Starting tie-breaker round.";
+          totalQuestions += 1;  // extend one more question
+          // If we need a new question from the pool beyond what was used
+          if(currentIndex >= shuffledQuestions.length) {
+            // Add one more question from the unused pool
+            var remainingPool = questions.filter(q => !shuffledQuestions.includes(q));
+            if(remainingPool.length > 0) {
+              shuffleArray(remainingPool);
+              shuffledQuestions.push(remainingPool[0]);
+            }
+          }
+          // Continue to next question (tie-breaker)
+          displayQuestion();
+          return;
+        }
+      }
+      endGame();
     }
   }
-  const arr=Array.from(set);
-  shuffle(arr);
-  return arr.slice(0,5);
-}
 
-function renderChoices(options, correct){
-  choicesEl.innerHTML="";
-  for (const opt of options){
-    const div=document.createElement("div");
-    div.className="choice";
-    div.textContent=opt;
-    div.addEventListener("click", ()=>onChoose(opt, correct, div));
-    choicesEl.appendChild(div);
-  }
-}
-
-function onChoose(selected, correct, el){
-  if (answeredLocked) return;
-
-  if (mode==="group" && !choicesRevealed){
-    showFeedback("Reveal choices first (so you can verify the spoken answer).", "bad");
-    return;
-  }
-
-  answeredLocked=true;
-  [...choicesEl.children].forEach(c=>{
-    c.classList.add("disabled");
-    c.style.pointerEvents="none";
-  });
-
-  const isCorrect = (selected===correct);
-
-  [...choicesEl.children].forEach(c=>{
-    if (c.textContent===correct) c.classList.add("correct");
-  });
-  if (!isCorrect) el.classList.add("wrong");
-
-  if (mode==="solo"){
-    soloScore += isCorrect ? 2 : -1;
-    pillScore.textContent=`Score: ${soloScore}`;
-
-    showFeedback(
-      isCorrect ? "✅ Correct! +2" : `❌ Incorrect. Correct answer: "${correct}" (-1)`,
-      isCorrect ? "good" : "bad"
-    );
-
-    setTimeout(()=>nextQuestion(), 3200);
-  } else {
-    const suggested = isCorrect
-      ? ((buzzedTeam!==null && buzzWasBeforeReveal) ? 4 : 2)
-      : -1;
-
-    const buzzTxt = (buzzedTeam!==null) ? `Buzzed team: ${teamNames[buzzedTeam]}.` : "No team buzzed.";
-    const sugTxt = `Suggested score: ${suggested>=0?"+":""}${suggested}${(suggested===4?" (double)":"")}.`;
-
-    showFeedback(
-      (isCorrect ? "✅ Correct." : `❌ Incorrect. Correct answer: "${correct}".`) + " " + buzzTxt + " " + sugTxt + " Click Next.",
-      isCorrect ? "good" : "bad"
-    );
-
-    scoreHint.style.display="block";
-    scoreHint.textContent=sugTxt;
-    btnNext.disabled=false;
-  }
-}
-
-function showFeedback(text,kind){
-  feedbackEl.textContent=text;
-  feedbackEl.className="feedback show " + (kind==="good" ? "good" : "bad");
-  feedbackEl.style.display="block";
-}
-
-function nextQuestion(){
-  qIndex++;
-
-  if (!isTieBreaker && qIndex>=30){
-    if (mode==="solo") return endSolo();
-    const {max,winners}=getLeaders();
-    if (winners.length===1) return endGroup();
-    isTieBreaker=true;
-    showFeedback(`Tie at ${max} points between: ${winners.map(i=>teamNames[i]).join(", ")}. Sudden death begins.`, "bad");
+  function endGame() {
+    questionScreen.style.display = "none";
+    scoreboardDiv.style.display = (gameMode === "group" ? "block" : "none");
+    resultScreen.style.display = "block";
+    if(gameMode === "solo") {
+      resultText.textContent = "Game Over! Your final score is " + score + ".";
+    } else {
+      // Determine winning team(s)
+      var maxScore = Math.max.apply(null, teamScores);
+      var winners = [];
+      for(var t=0; t<teamScores.length; t++) {
+        if(teamScores[t] === maxScore) winners.push("Team " + (t+1));
+      }
+      if(winners.length === 1) {
+        resultText.textContent = winners[0] + " wins with " + maxScore + " points!";
+      } else {
+        resultText.textContent = "It's a tie! Winners: " + winners.join(", ") + " (each with " + maxScore + " points).";
+      }
+    }
+    // Submit scores to Google Sheets via Apps Script web app
+    submitScores();
   }
 
-  if (isTieBreaker && mode==="group"){
-    const {winners}=getLeaders();
-    if (winners.length===1) return endGroup();
+  function updateScoreboardDisplay() {
+    // Build scoreboard table for group play
+    scoreTable.innerHTML = "";
+    var headerRow = document.createElement("tr");
+    var th1 = document.createElement("th"); th1.textContent = "Team";
+    var th2 = document.createElement("th"); th2.textContent = "Score";
+    headerRow.appendChild(th1);
+    headerRow.appendChild(th2);
+    scoreTable.appendChild(headerRow);
+    teamScores.forEach(function(score, index) {
+      var tr = document.createElement("tr");
+      var teamCell = document.createElement("td");
+      teamCell.textContent = "Team " + (index+1);
+      var scoreCell = document.createElement("td");
+      scoreCell.textContent = score;
+      // Add plus/minus buttons for manual adjustment
+      var minusBtn = document.createElement("button");
+      minusBtn.textContent = "–";
+      minusBtn.addEventListener("click", function() {
+        teamScores[index]--;
+        updateScoreboardDisplay();
+      });
+      var plusBtn = document.createElement("button");
+      plusBtn.textContent = "+";
+      plusBtn.addEventListener("click", function() {
+        teamScores[index]++;
+        updateScoreboardDisplay();
+      });
+      scoreCell.appendChild(minusBtn);
+      scoreCell.appendChild(plusBtn);
+      tr.appendChild(teamCell);
+      tr.appendChild(scoreCell);
+      scoreTable.appendChild(tr);
+    });
   }
 
-  if (qIndex>=gameQuestions.length){
-    // replenish buffer if needed
-    const more = buildQuizQuestions().slice(0,50);
-    gameQuestions = gameQuestions.concat(more);
+  // In group mode, update scoreboard whenever teamScores array is changed
+  // We'll use a Proxy or just call update after every manual change inside the button events (already done above in plus/minus listeners).
+
+  function submitScores() {
+    if(!scriptURL) return;
+    if(gameMode === "solo") {
+      // Solo: send player's score
+      var url = scriptURL + "?mode=solo&score=" + encodeURIComponent(score);
+      fetch(url, { mode: 'no-cors' })
+        .catch(err => console.log("Score submission error (solo):", err));
+    } else {
+      // Group: send each team's score
+      teamScores.forEach(function(s, idx) {
+        var teamName = "Team " + (idx+1);
+        var url = scriptURL + "?mode=group&team=" + encodeURIComponent(teamName) + "&score=" + encodeURIComponent(s);
+        fetch(url, { mode: 'no-cors' })
+          .catch(err => console.log("Score submission error (group):", err));
+      });
+    }
+    console.log("Scores submitted to Google Sheet.");
   }
 
-  renderQuestion();
-}
-
-function getLeaders(){
-  const max=Math.max(...teamScores);
-  const winners=[];
-  teamScores.forEach((s,i)=>{if (s===max) winners.push(i);});
-  return {max,winners};
-}
-
-function endSolo(){
-  stopAnyAudio();
-  screenQuiz.style.display="none";
-  screenEnd.style.display="block";
-
-  endTitle.textContent="Solo Game Complete!";
-  soloEndBlock.style.display="block";
-  groupEndBlock.style.display="none";
-  endScore.textContent=`Score: ${soloScore}`;
-  submitStatus.style.display="none";
-}
-
-function endGroup(){
-  stopAnyAudio();
-  screenQuiz.style.display="none";
-  screenEnd.style.display="block";
-
-  endTitle.textContent="Group Game Complete!";
-  soloEndBlock.style.display="none";
-  groupEndBlock.style.display="block";
-
-  const {max,winners}=getLeaders();
-  winnerText.textContent = winners.length===1
-    ? `🏆 ${teamNames[winners[0]]} won with ${max} points!`
-    : `🤝 Tie at ${max}: ${winners.map(i=>teamNames[i]).join(", ")}`;
-
-  finalScores.innerHTML =
-    `<h3 style="margin:.2rem 0 .6rem">Final Scores</h3>` +
-    `<div class="pillbar" style="justify-content:flex-start">` +
-    teamScores.map((s,i)=>`<span class="pill"><b>${escapeHtml(teamNames[i])}</b>: ${s}</span>`).join("") +
-    `</div>`;
-}
-
-/* Solo score submit */
-btnSubmit.addEventListener("click", async ()=>{
-  const name=(nameInput.value||"").trim();
-  if (!name){
-    submitStatus.style.display="inline-flex";
-    submitStatus.textContent="Please enter your name.";
-    return;
+  // Utility: shuffle an array in-place
+  function shuffleArray(arr) {
+    for(let i = arr.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
   }
-  const timeISO=new Date().toISOString();
-  submitStatus.style.display="inline-flex";
-  submitStatus.textContent="Submitting score...";
-
-  const url = `${SCRIPT_URL}?Name=${encodeURIComponent(name)}&Time=${encodeURIComponent(timeISO)}&Score=${encodeURIComponent(String(soloScore))}`;
-  try{
-    await fetch(url, {mode:"no-cors"});
-    submitStatus.textContent="Submitted! 🎉 (If it doesn’t show instantly, refresh the sheet.)";
-  }catch(e){
-    submitStatus.textContent="Submission failed. Check your Apps Script deployment settings.";
-  }
-});
-
-goToStart();
 </script>
+
 </body>
 </html>
